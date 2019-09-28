@@ -1,0 +1,10 @@
+1. No lo pone
+2. No lo pone, aunque se supone que deberia indicarlo como dice al principio de la entrega
+3. En ensamblador vamos a declarar las variables con un '_' delante del nombre de la variable
+4. No se indica aparentemente
+5. No se indica aparentemente
+6. No se indica aparentemente
+7. Se representan como enteros de 4 bytes que recogen los valores de 0 (si es false) y 1 (si es true)
+8. La metemos mediante la sentencia push dword _x y lo que se asocia es la referencia de la direccion de donde se encuentra la variable
+9. La metemos mediante la sentencia push dword 3 y se asocia el valor de la constante
+10. El resultado de la operacion se almacena en forma de valor en la cima de la pila como último argumento entrante y saliente (usando registros)
