@@ -46,18 +46,18 @@ void asignar(FILE* fpasm, char* nombre, int es_variable){
 	if(es_variable == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
 	}
-	fprintf("\n\tmov dowrd [_%s], eax",nombre);
+	fprintf(fpasm,"\n\tmov dowrd [_%s], eax",nombre);
 }
 
 void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 	fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 	fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
@@ -69,11 +69,11 @@ void restar(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 	fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 	fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
@@ -84,11 +84,11 @@ void multiplicar(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 		fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 		fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
@@ -100,11 +100,11 @@ void dividir(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 		fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 		fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
@@ -120,11 +120,11 @@ void o(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 	fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 	fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
@@ -135,11 +135,11 @@ void y(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpop dword ebx");
 	fprintf(fpasm, "\n\tpop dword eax");
 
-	if(es_variable_1 == VARIABLE) {
+	if(es_variable_1 == 1) {
 	fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	if(es_variable_2 == VARIABLE) {
+	if(es_variable_2 == 1) {
 	fprintf(fpasm, "\n\tmov dword ebx, [ebx]");
 	}
 
