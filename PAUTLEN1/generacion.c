@@ -17,7 +17,7 @@ void declarar_variable(FILE* fpasm, char * nombre,  int tipo,  int tamano){
 }
 
 void escribir_segmento_codigo(FILE* fpasm){
-    fprintf(fpasm, "\nsegment .text\n\tglobal main\n\textern scant_int, print_int, scan_float, print_float, scan_boolean, print_boolean\n\textern print_endofline, print_blank, print_string\n\textern alfa_malloc, alfa_free, ld_float");
+    fprintf(fpasm, "\nsegment .text\n\tglobal main\n\textern scan_int, print_int, scan_float, print_float, scan_boolean, print_boolean\n\textern print_endofline, print_blank, print_string\n\textern alfa_malloc, alfa_free, ld_float");
 }
 
 void escribir_inicio_main(FILE* fpasm){
@@ -27,7 +27,7 @@ void escribir_inicio_main(FILE* fpasm){
 void escribir_fin(FILE* fpasm){
 	fprintf(fpasm,"\n\tjmp near fin");
 	fprintf(fpasm,"\ndivision_cero:");
-	fprintf(fpasm,"\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_enfofline\njmp near fin");
+	fprintf(fpasm,"\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\njmp near fin");
 	fprintf(fpasm, "\nfin:");
     fprintf(fpasm, "\n\tmov dword esp, [__esp]");
     fprintf(fpasm, "\n\tret\n");
@@ -46,7 +46,7 @@ void asignar(FILE* fpasm, char* nombre, int es_variable){
 	if(es_variable == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
 	}
-	fprintf(fpasm,"\n\tmov dowrd [_%s], eax",nombre);
+	fprintf(fpasm,"\n\tmov dword [_%s], eax",nombre);
 }
 
 void sumar(FILE* fpasm, int es_variable_1, int es_variable_2){
@@ -183,7 +183,7 @@ void no(FILE* fpasm, int es_variable, int cuantos_no){ //BIEN A FALTA DE PROBAR
 
 void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
@@ -209,7 +209,7 @@ void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 }
 
 void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
@@ -234,7 +234,7 @@ void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 }
 
 void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
@@ -259,7 +259,7 @@ void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 }
 
 void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
@@ -284,7 +284,7 @@ void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 }
 
 void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
@@ -309,7 +309,7 @@ void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 }
 
 void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
-	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dowrd eax");
+	fprintf(fpasm,"\n\tpop dword ecx\n\tpop dword eax");
 	
 	if(es_variable1 == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
