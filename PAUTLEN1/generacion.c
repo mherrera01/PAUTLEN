@@ -363,3 +363,107 @@ void escribir(FILE* fpasm, int es_variable, int tipo){
 	fprintf(fpasm,"\n\tadd esp, 4");
 	fprintf(fpasm,"\n\tcall print_endofline");
 }
+
+void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+	fprintf(fpasm,"\n\tpop dword eax");
+	if(exp_es_variable == 1){
+		fprintf(fpasm,"\n\tmov dword eax, [eax]");
+	}
+	
+	fprintf(fpasm,"\n\tcmp eax, 0");
+	fprintf(fpasm,"\t\tje near _fin_condicional_simple_%d", etiqueta);
+}
+
+void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
+	fprintf(fpasm,"\n\tpop dword eax");
+	if(exp_es_variable == 1){
+		fprintf(fpasm,"\n\tmov dword eax, [eax]");
+	}
+	
+	fprintf(fpasm,"\n\tcmp eax, 0");
+	fprintf(fpasm,"\t\tje near _fin_condicional_compuesto_%d", etiqueta);
+}
+
+void ifthen_fin(FILE * fpasm, int etiqueta){
+	fprintf(fpasm,"\n_fin_condicional_simple_%d:", etiqueta);
+}
+
+void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
+	fprintf(fpasm,"\n\tjmp near _fin_condicional_compuesto_%d",etiqueta);
+	fprintf(fpasm,"\n_fin_then_condicional_compuesto_%d:",etiqueta);
+}
+
+void ifthenelse_fin( FILE * fpasm, int etiqueta){
+	fprintf(fpasm,"\n_fin_condicional_compuesto_%d:", etiqueta);
+}
+
+void while_inicio(FILE * fpasm, int etiqueta){
+	fprintf(fpasm,"\n_inicio_bucle_%d:",etiqueta);
+}
+
+void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
+	fprintf(fpasm,"\n\tpop dword eax");
+	if(exp_es_variable == 1){
+		fprintf(fpasm,"\n\tmov eax, [eax]");
+	}
+	
+	fprintf(fpasm,"\n\tcmp eax, 0");
+	fprintf(fpasm,"\n\tje near _fin_bucle_%d", etiqueta);
+}
+
+void while_fin( FILE * fpasm, int etiqueta){
+	fprintf(fpasm,"\n\tjmp near _inicio_bucle_%d", etiqueta);
+	fprintf(fpasm,"\n_fin_bucle_%d:", etiqueta);
+}
+
+void escribir_elemento_vector(FILE * fpasm,char * nombre_vector,int tam_max, int exp_es_direccion){
+	
+}
+
+void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
+	fprintf(fpasm,"\n%s:",nombre_funcion);
+	fprintf(fpasm,"\n\tpush ebp");
+	fprintf(fpasm,"\n\tmov dword ebp, esp");
+	fprintf(fpasm,"\n\tsub esp, %d", 4*num_var_loc);
+}
+
+void retornarFuncion(FILE * fd_asm, int es_variable){
+	fprintf(fpasm,"\n\tpop eax");
+	if(es_variable == 1){
+		fprintf(fpasm,"\n\tmov dword eax, [eax]");
+	}
+	
+	fprintf(fpasm,"\n\tmov esp, ebp");
+	fprintf(fpasm,"\n\tpop ebp");
+	fprintf(fpasm,"\n\tret");
+}
+
+void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
+	int aux=0;
+	aux = 4 *(1 + (num_total_parametros - pos_parametro));
+	fprintf(fpasm,"\n\tlea eax, [ebp + %d]",aux);
+	fprintf(fpasm,"\n\tpush dword eax");
+}
+
+void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
+	int aux=0;
+	aux = 4 * posicion_variable_local;
+	fprintf(fpasm,"\n\tlea eax, [ebp - %d]",aux);
+	fprintf(fpasm,"\n\tpush dword eax");
+}
+
+void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+	
+}
+
+void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
+	
+}
+
+void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
+	
+}
+
+void limpiarPila(FILE * fd_asm, int num_argumentos){
+	
+}
