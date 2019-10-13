@@ -421,21 +421,21 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector,int tam_max, int
 }
 
 void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
-	fprintf(fpasm,"\n%s:",nombre_funcion);
-	fprintf(fpasm,"\n\tpush ebp");
-	fprintf(fpasm,"\n\tmov dword ebp, esp");
-	fprintf(fpasm,"\n\tsub esp, %d", 4*num_var_loc);
+	fprintf(fd_asm,"\n%s:",nombre_funcion);
+	fprintf(fd_asm,"\n\tpush dword ebp");
+	fprintf(fd_asm,"\n\tmov dword ebp, esp");
+	fprintf(fd_asm,"\n\tsub esp, %d", 4*num_var_loc);
 }
 
 void retornarFuncion(FILE * fd_asm, int es_variable){
-	fprintf(fpasm,"\n\tpop eax");
+	fprintf(fd_asm,"\n\tpop dword eax");
 	if(es_variable == 1){
-		fprintf(fpasm,"\n\tmov dword eax, [eax]");
+		fprintf(fd_asm,"\n\tmov dword eax, [eax]");
 	}
 	
-	fprintf(fpasm,"\n\tmov esp, ebp");
-	fprintf(fpasm,"\n\tpop ebp");
-	fprintf(fpasm,"\n\tret");
+	fprintf(fd_asm,"\n\tmov dword esp, ebp");
+	fprintf(fd_asm,"\n\tpop dword ebp");
+	fprintf(fd_asm,"\n\tret");
 }
 
 void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
@@ -453,17 +453,28 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 }
 
 void asignarDestinoEnPila(FILE* fpasm, int es_variable){
-	
+	fprintf(fpasm,"\n\tpop dword eax"); //Valor de la cima, que corresponde lo que vamos a asignar
+	if(es_variable == 1){
+		fprintf(fpasm,"\n\tmov dword eax, [eax]");
+	}
+	fprintf(fpasm,"\n\tpop dword ebx"); //direccion donde hay que asignar
+	fprintf(fpasm,"\n\tmov dword [ebx], eax");
 }
 
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
-	
+	if(es_variable == 1){
+		fprintf(fd_asm,"\n\tpop dword eax");
+		fprintf(fd_asm,"\n\tmov dword eax, [eax]");
+		fprintf(fd_asm,"\n\tpush dword eax");
+	}
 }
 
 void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
-	
+	fprintf(fd_asm,"\n\tcall %s", nombre_funcion);
+	fprintf(fd_asm,"\n\tadd esp, %d",4*num_argumentos);
+	fprintf(fd_asm,"\n\tpush dword eax");
 }
 
 void limpiarPila(FILE * fd_asm, int num_argumentos){
-	
+	fprintf(fd_asm,"\n\tadd esp, %d",4*num_argumentos);
 }
