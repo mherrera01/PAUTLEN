@@ -147,7 +147,7 @@ void y(FILE* fpasm, int es_variable_1, int es_variable_2){
 	fprintf(fpasm, "\n\tpush dword eax");
 }
 
-void cambiar_signo(FILE* fpasm, int es_variable){ //BIEN A FALTA DE PROBAR
+void cambiar_signo(FILE* fpasm, int es_variable){ 
 	fprintf(fpasm,"\n\tpop dword eax");
 	
 	if(es_variable == 1){
@@ -158,7 +158,7 @@ void cambiar_signo(FILE* fpasm, int es_variable){ //BIEN A FALTA DE PROBAR
 	fprintf(fpasm,"\n\tpush dword eax");
 }
 
-void no(FILE* fpasm, int es_variable, int cuantos_no){ //BIEN A FALTA DE PROBAR
+void no(FILE* fpasm, int es_variable, int cuantos_no){ 
 	
 	fprintf(fpasm, "\n\tpop dword ecx");
     
@@ -452,12 +452,13 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 	fprintf(fpasm,"\n\tpush dword eax");
 }
 
-void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+void asignarDestinoEnPila(FILE* fpasm, int es_variable){	
+	fprintf(fpasm,"\n\tpop dword ebx"); //direccion 
 	fprintf(fpasm,"\n\tpop dword eax"); //Valor de la cima, que corresponde lo que vamos a asignar
 	if(es_variable == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
 	}
-	fprintf(fpasm,"\n\tpop dword ebx"); //direccion donde hay que asignar
+	
 	fprintf(fpasm,"\n\tmov dword [ebx], eax");
 }
 
