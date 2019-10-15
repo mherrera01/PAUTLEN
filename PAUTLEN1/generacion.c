@@ -371,7 +371,7 @@ void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax, 0");
-	fprintf(fpasm,"\t\tje near _fin_condicional_simple_%d", etiqueta);
+	fprintf(fpasm,"\n\tje near _fin_condicional_simple_%d", etiqueta);
 }
 
 void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
@@ -381,7 +381,7 @@ void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax, 0");
-	fprintf(fpasm,"\t\tje near _fin_condicional_compuesto_%d", etiqueta);
+	fprintf(fpasm,"\n\tje near _fin_condicional_simple_%d", etiqueta);
 }
 
 void ifthen_fin(FILE * fpasm, int etiqueta){
@@ -390,7 +390,7 @@ void ifthen_fin(FILE * fpasm, int etiqueta){
 
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
 	fprintf(fpasm,"\n\tjmp near _fin_condicional_compuesto_%d",etiqueta);
-	fprintf(fpasm,"\n_fin_then_condicional_compuesto_%d:",etiqueta);
+	fprintf(fpasm,"\n_fin_condicional_simple_%d:",etiqueta);
 }
 
 void ifthenelse_fin( FILE * fpasm, int etiqueta){

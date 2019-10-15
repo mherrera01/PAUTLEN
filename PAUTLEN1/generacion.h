@@ -124,6 +124,10 @@ void ifthen_fin(FILE * fpasm, int etiqueta);
 
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta);
 
+void ifthenelse_fin( FILE * fpasm, int etiqueta);
+
+void while_inicio(FILE * fpasm, int etiqueta);
+
 void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta);
 
 void while_fin( FILE * fpasm, int etiqueta);
