@@ -40,8 +40,4 @@ int main(int argc, char** argv){
 
     return 0;
     
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 80f3c29159b548f5a2aa656a01d7e82b65a17075
