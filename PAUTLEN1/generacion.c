@@ -10,6 +10,7 @@ void escribir_cabecera_bss(FILE* fpasm){
 void escribir_subseccion_data(FILE* fpasm){
     fprintf(fpasm, "\nsegment .data");
     fprintf(fpasm, "\n\terr_div0 db \"Error al dividir entre 0\",0");
+	fprintf(fpasm, "\n\terr_indice_vector db \"Indice de vector fuera de rango 0\", 0");
 }
 
 void declarar_variable(FILE* fpasm, char * nombre,  int tipo,  int tamano){
@@ -25,12 +26,29 @@ void escribir_inicio_main(FILE* fpasm){
 }
 
 void escribir_fin(FILE* fpasm){
-	fprintf(fpasm,"\n\tjmp near fin");
-	fprintf(fpasm,"\ndivision_cero:");
-	fprintf(fpasm,"\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\njmp near fin");
-	fprintf(fpasm, "\nfin:");
-    fprintf(fpasm, "\n\tmov dword esp, [__esp]");
-    fprintf(fpasm, "\n\tret\n");
+	/* Sentencia necesaria si no ha habido errores en tiempo de ejecucion */
+	fprintf(fpasm, "\n\tjump near fin");
+
+	/* Codigo necesario para gestionar el error de division entre 0 */
+	fprintf(fpasm, "\n\tfin_error_division:");
+	fprintf(fpasm, "\n\t\tpush dword err_div0");
+	fprintf(fpasm, "\n\t\tcall print_string");
+	fprintf(fpasm, "\n\t\tadd esp, 4");
+	fprintf(fpasm, "\n\t\tcall print_endofline");
+	fprintf(fpasm, "\n\t\tjump near fin");
+
+	/* Código necesario para gestionar el error de indice de vector fuera de rango */
+	fprintf(fpasm, "\n\tfin_indice_fuera_rango:");
+	fprintf(fpasm, "\n\t\tpush dword err_indice_vector");
+	fprintf(fpasm, "\n\t\tcall print_string");
+	fprintf(fpasm, "\n\t\tadd esp, 4");
+	fprintf(fpasm, "\n\t\tcall print_endofline");
+	fprintf(fpasm, "\n\t\tjump near fin");
+
+	/* Etiqueta de fin */
+	fprintf(fpasm, "\n\tfin:");
+	fprintf(fpasm, "\n\t\tmov esp, [__esp]");
+	fprintf(fpasm, "\n\t\tret");
 }
 
 void escribir_operando(FILE* fpasm, char* nombre, int es_variable){
@@ -417,7 +435,21 @@ void while_fin( FILE * fpasm, int etiqueta){
 }
 
 void escribir_elemento_vector(FILE * fpasm,char * nombre_vector,int tam_max, int exp_es_direccion){
-	
+	fprintf(fpasm, "\n\tpop dword eax");
+
+	if(exp_es_direccion == 1){
+		fprintf(fpasm, "\n\tmov dword eax, [eax]");
+	}
+
+	fprintf(fpasm, "\n\tcmp ax, 0");
+	fprintf(fpasm, "\n\tjl near fin_indice_fuera_rango");
+
+	fprintf(fpasm, "\n\tcmp eax, %d", tam_max-1);
+	fprintf(fpasm, "\n\tjg near fin_indice_fuera_de_rango");
+
+	fprintf(fpasm, "\n\tmov dword edx, _%s", nombre_vector);
+	fprintf(fpasm, "\n\tlea eax, [edx + eax*4]");
+	fprintf(fpasm, "\n\tpush dowrd eax");
 }
 
 void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
