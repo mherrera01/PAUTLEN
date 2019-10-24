@@ -27,28 +27,28 @@ void escribir_inicio_main(FILE* fpasm){
 
 void escribir_fin(FILE* fpasm){
 	/* Sentencia necesaria si no ha habido errores en tiempo de ejecucion */
-	fprintf(fpasm, "\n\tjump near fin");
+	fprintf(fpasm, "\n\tjmp near fin");
 
 	/* Codigo necesario para gestionar el error de division entre 0 */
-	fprintf(fpasm, "\n\tfin_error_division:");
-	fprintf(fpasm, "\n\t\tpush dword err_div0");
-	fprintf(fpasm, "\n\t\tcall print_string");
-	fprintf(fpasm, "\n\t\tadd esp, 4");
-	fprintf(fpasm, "\n\t\tcall print_endofline");
-	fprintf(fpasm, "\n\t\tjump near fin");
+	fprintf(fpasm, "\nfin_error_division:");
+	fprintf(fpasm, "\n\tpush dword err_div0");
+	fprintf(fpasm, "\n\tcall print_string");
+	fprintf(fpasm, "\n\tadd esp, 4");
+	fprintf(fpasm, "\n\tcall print_endofline");
+	fprintf(fpasm, "\n\tjmp near fin");
 
 	/* Código necesario para gestionar el error de indice de vector fuera de rango */
-	fprintf(fpasm, "\n\tfin_indice_fuera_rango:");
-	fprintf(fpasm, "\n\t\tpush dword err_indice_vector");
-	fprintf(fpasm, "\n\t\tcall print_string");
-	fprintf(fpasm, "\n\t\tadd esp, 4");
-	fprintf(fpasm, "\n\t\tcall print_endofline");
-	fprintf(fpasm, "\n\t\tjump near fin");
+	fprintf(fpasm, "\nfin_indice_fuera_rango:");
+	fprintf(fpasm, "\n\tpush dword err_indice_vector");
+	fprintf(fpasm, "\n\tcall print_string");
+	fprintf(fpasm, "\n\tadd esp, 4");
+	fprintf(fpasm, "\n\tcall print_endofline");
+	fprintf(fpasm, "\n\tjmp near fin");
 
 	/* Etiqueta de fin */
-	fprintf(fpasm, "\n\tfin:");
-	fprintf(fpasm, "\n\t\tmov esp, [__esp]");
-	fprintf(fpasm, "\n\t\tret");
+	fprintf(fpasm, "\nfin:");
+	fprintf(fpasm, "\n\tmov esp, [__esp]");
+	fprintf(fpasm, "\n\tret");
 }
 
 void escribir_operando(FILE* fpasm, char* nombre, int es_variable){
@@ -212,17 +212,17 @@ void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjz near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjz near true_igual_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_igual_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_igual_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_igual_%d:",etiqueta);
 	
 }
 
@@ -238,17 +238,17 @@ void distinto(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjnz near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjnz near true_distinto_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_distinto_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_distinto_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_distinto_%d:",etiqueta);
 }
 
 void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
@@ -263,17 +263,17 @@ void menor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjle near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjle near true_menor_igual_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_menor_igual_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_menor_igual_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_menor_igual_%d:",etiqueta);
 }
 
 void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
@@ -288,17 +288,17 @@ void mayor_igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjge near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjge near true_mayor_igual_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_mayor_igual_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_mayor_igual_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_mayor_igual_%d:",etiqueta);
 }
 
 void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
@@ -313,17 +313,17 @@ void menor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjl near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjl near true_menor_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_menor_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_menor_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_menor_%d:",etiqueta);
 }
 
 void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
@@ -338,17 +338,17 @@ void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta){
 	}
 	
 	fprintf(fpasm,"\n\tcmp eax,ecx");
-	fprintf(fpasm,"\n\tjg near true_%d", etiqueta);
+	fprintf(fpasm,"\n\tjg near true_mayor_%d", etiqueta);
 
 	fprintf(fpasm,"\n\tmov dword eax, 0");
 	fprintf(fpasm,"\n\tpush dword eax");
-	fprintf(fpasm,"\n\tjmp near continua_%d", etiqueta);
+	fprintf(fpasm,"\n\tjmp near continua_mayor_%d", etiqueta);
 	
-	fprintf(fpasm,"\ntrue_%d:",etiqueta);
+	fprintf(fpasm,"\ntrue_mayor_%d:",etiqueta);
 	fprintf(fpasm,"\n\tmov dword eax,1");
 	fprintf(fpasm,"\n\tpush dword eax");
 	
-	fprintf(fpasm,"\n\tcontinua_%d:",etiqueta);
+	fprintf(fpasm,"\ncontinua_mayor_%d:",etiqueta);
 }
 
 void leer(FILE* fpasm, char* nombre, int tipo){
@@ -403,7 +403,7 @@ void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
 }
 
 void ifthen_fin(FILE * fpasm, int etiqueta){
-	fprintf(fpasm,"\n_fin_condicional_simple_%d:", etiqueta);
+	fprintf(fpasm,"\n_fin_condicional_simple_%d:", etiqueta); //FIN del THEN
 }
 
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
@@ -411,7 +411,7 @@ void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
 	fprintf(fpasm,"\n_fin_condicional_simple_%d:",etiqueta);
 }
 
-void ifthenelse_fin( FILE * fpasm, int etiqueta){
+void ifthenelse_fin( FILE * fpasm, int etiqueta){ //FIN DE CUALQUIER THEN CON ELSE INCLUIDO
 	fprintf(fpasm,"\n_fin_condicional_compuesto_%d:", etiqueta);
 }
 
@@ -441,15 +441,15 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector,int tam_max, int
 		fprintf(fpasm, "\n\tmov dword eax, [eax]");
 	}
 
-	fprintf(fpasm, "\n\tcmp ax, 0");
+	fprintf(fpasm, "\n\tcmp eax, 0");
 	fprintf(fpasm, "\n\tjl near fin_indice_fuera_rango");
 
 	fprintf(fpasm, "\n\tcmp eax, %d", tam_max-1);
-	fprintf(fpasm, "\n\tjg near fin_indice_fuera_de_rango");
+	fprintf(fpasm, "\n\tjg near fin_indice_fuera_rango");
 
 	fprintf(fpasm, "\n\tmov dword edx, _%s", nombre_vector);
 	fprintf(fpasm, "\n\tlea eax, [edx + eax*4]");
-	fprintf(fpasm, "\n\tpush dowrd eax");
+	fprintf(fpasm, "\n\tpush dword eax");
 }
 
 void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
