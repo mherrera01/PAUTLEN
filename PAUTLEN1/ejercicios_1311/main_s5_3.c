@@ -35,7 +35,12 @@ int main (int argc, char ** argv)
 
     	escribir_segmento_codigo(fd_asm);
 
-        //funcion factorial
+        /**************************************
+         **************************************
+         ************* FACTORIAL **************
+         **************************************
+         **************************************
+         */
         declararFuncion(fasm, "factorial", 0);
 
         escribirParametro(fasm,0,1);
@@ -60,51 +65,43 @@ int main (int argc, char ** argv)
         cima_etiquetas--;
 
 
-        //funcion grande
-        declararFuncion(fasm, "factorial", 1);
+        /**************************************
+         **************************************
+         ************* GRANDE *****************
+         **************************************
+         **************************************
+         */
 
+        declararFuncion(fasm, "grande", 1);
 
-
-        //escribirParametro(fasm,0,2);
-        //operandoEnPilaAArgumento(fasm, 1);
-
+        escribirParametro(fasm,0,2);
+        operandoEnPilaAArgumento(fasm, 1);
+        
         escribirParametro(fasm,1,2);
         operandoEnPilaAArgumento(fasm, 1);
+        multiplicar(fasm, 1, 1);
 
-        escribir_operando(fasm,"2",0);
-
-        multiplicar(fasm,);
-
-
-
-        escribir_operando(fasm,"0",0);
-
-        igual(fasm,1,0,etiqueta);
-
-        ifthenelse_inicio(fasm, 0, etiqueta); //PRIMER IF THEN ELSE
-
-        //RETORNO 1
-        escribir_operando(salida,"1",0);
-        retornarFuncion(salida,0);
-
-        etiqueta = etiquetas[cima_etiquetas];
-        ifthenelse_fin_then(fasm, etiqueta);
-
-        //RETORNO N * FACTORIAL(N-1);
+        escribirVariableLocal(fasm,1);
+        asignarDestinoEnPila(fasm, 0);    
 
 
-        etiqueta = etiquetas[cima_etiquetas];
-        ifthenelse_fin(fasm, etiqueta);
-        cima_etiquetas--;
+        escribirParametro(fasm,0,2);
+        operandoEnPilaAArgumento(fasm, 1);
+        escribirVariableLocal(fasm,1);
+        mayor(fasm,1,1,etiqueta);
 
         retornarFuncion(fasm, 0);
 
 
 
-
     	escribir_inicio_main(fd_asm);
 
-        
+        /**************************************
+         **************************************
+         ************* BUCLE 1 ****************
+         **************************************
+         **************************************
+         */
 
     	//m=0;
     	escribir_operando(fd_asm,"0",0);
@@ -129,32 +126,27 @@ int main (int argc, char ** argv)
     	etiqueta = etiquetas[cima_etiquetas];
     	while_exp_pila(fd_asm, 0, etiqueta);
 
-    	//printf m
-    	escribir_operando(fd_asm,"m",1);
-    	escribir(fd_asm,1,ENTERO);
-
-         //v[m] = m*10;
-        escribir_operando(fd_asm,"m",1);
-        escribir_operando(fd_asm,"10",0);
-        multiplicar(fd_asm,1,0);
-
+        //v[m] = factorial(m);
+        escribir_operando(fasm, "m", 1);
+        operandoEnPilaAArgumento(fasm, 1);
+        llamarFuncion(fasm, "factorial", 0);
 
         escribir_operando(fd_asm,"m",1);
         escribir_elemento_vector(fd_asm,"v", 4, 1);
         asignarDestinoEnPila(fd_asm,0);
 
-    	//v[m] = !(m > 2);
-    	escribir_operando(fd_asm,"m",1);
-    	escribir_operando(fd_asm,"2",0);
-    	mayor(fd_asm,1,0,etiqueta);
+    	//vb[m] = grande(m,10);
+    	escribir_operando(fasm, "m", 1);
+        operandoEnPilaAArgumento(fasm, 1);
+        escribir_operando(fasm, "10", 0);
+        operandoEnPilaAArgumento(fasm, 0);
+        llamarFuncion(fasm, "grande", 1);
 
-    
-        no(fd_asm,0,etiqueta);
         escribir_operando(fd_asm, "m", 1);
     	escribir_elemento_vector(fd_asm,"vb", 4, 1);
         asignarDestinoEnPila(fd_asm, 0); 
 
-       //m = m + 1
+        //m = m + 1
         escribir_operando(fd_asm,"m",1);
         escribir_operando(fd_asm,"1",0);
         sumar(fd_asm,1,0);
@@ -166,6 +158,16 @@ int main (int argc, char ** argv)
 
         //Al cerrar el ámbito, decrementamos el contador de cima de etiquetas.
         cima_etiquetas--;
+
+        /**************************************
+         **************************************
+         ************* BUCLE 2 ****************
+         **************************************
+         **************************************
+         */
+
+
+
 
         //m=0;
         escribir_operando(fd_asm,"0",0);
