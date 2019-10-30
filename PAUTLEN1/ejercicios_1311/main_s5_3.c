@@ -46,7 +46,8 @@ int main (int argc, char ** argv)
         getiqueta++;
         cima_etiquetas++;
         etiquetas[cima_etiquetas]=getiqueta;
-
+        etiqueta= getiqueta;
+        
         escribirParametro(fd_asm,0,1);
         escribir_operando(fd_asm,"0",0);
         igual(fd_asm,1,0,etiqueta);
