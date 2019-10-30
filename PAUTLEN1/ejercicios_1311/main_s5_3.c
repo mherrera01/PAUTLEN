@@ -41,27 +41,27 @@ int main (int argc, char ** argv)
          **************************************
          **************************************
          */
-        declararFuncion(fasm, "factorial", 0);
+        declararFuncion(fd_asm, "factorial", 0);
 
-        escribirParametro(fasm,0,1);
-        operandoEnPilaAArgumento(fasm, 1);
-        escribir_operando(fasm,"0",0);
-        igual(fasm,1,0,etiqueta);
+        escribirParametro(fd_asm,0,1);
+        operandoEnPilaAArgumento(fd_asm, 1);
+        escribir_operando(fd_asm,"0",0);
+        igual(fd_asm,1,0,etiqueta);
 
-        ifthenelse_inicio(fasm, 0, etiqueta); //PRIMER IF THEN ELSE
+        ifthenelse_inicio(fd_asm, 0, etiqueta); //PRIMER IF THEN ELSE
 
         //RETORNO 1
-        escribir_operando(salida,"1",0);
-        retornarFuncion(salida,0);
+        escribir_operando(fd_asm,"1",0);
+        retornarFuncion(fd_asm,0);
 
         etiqueta = etiquetas[cima_etiquetas];
-        ifthenelse_fin_then(fasm, etiqueta);
+        ifthenelse_fin_then(fd_asm, etiqueta);
 
         //RETORNO N * FACTORIAL(N-1);
 
 
         etiqueta = etiquetas[cima_etiquetas];
-        ifthenelse_fin(fasm, etiqueta);
+        ifthenelse_fin(fd_asm, etiqueta);
         cima_etiquetas--;
 
 
@@ -72,25 +72,25 @@ int main (int argc, char ** argv)
          **************************************
          */
 
-        declararFuncion(fasm, "grande", 1);
+        declararFuncion(fd_asm, "grande", 1);
 
-        escribirParametro(fasm,0,2);
-        operandoEnPilaAArgumento(fasm, 1);
+        escribirParametro(fd_asm,0,2);
+        operandoEnPilaAArgumento(fd_asm, 1);
         
-        escribirParametro(fasm,1,2);
-        operandoEnPilaAArgumento(fasm, 1);
-        multiplicar(fasm, 1, 1);
+        escribirParametro(fd_asm,1,2);
+        operandoEnPilaAArgumento(fd_asm, 1);
+        multiplicar(fd_asm, 1, 1);
 
-        escribirVariableLocal(fasm,1);
-        asignarDestinoEnPila(fasm, 0);    
+        escribirVariableLocal(fd_asm,1);
+        asignarDestinoEnPila(fd_asm, 0);    
 
 
-        escribirParametro(fasm,0,2);
-        operandoEnPilaAArgumento(fasm, 1);
-        escribirVariableLocal(fasm,1);
-        mayor(fasm,1,1,etiqueta);
+        escribirParametro(fd_asm,0,2);
+        operandoEnPilaAArgumento(fd_asm, 1);
+        escribirVariableLocal(fd_asm,1);
+        mayor(fd_asm,1,1,etiqueta);
 
-        retornarFuncion(fasm, 0);
+        retornarFuncion(fd_asm, 0);
 
 
 
@@ -127,20 +127,20 @@ int main (int argc, char ** argv)
     	while_exp_pila(fd_asm, 0, etiqueta);
 
         //v[m] = factorial(m);
-        escribir_operando(fasm, "m", 1);
-        operandoEnPilaAArgumento(fasm, 1);
-        llamarFuncion(fasm, "factorial", 0);
+        escribir_operando(fd_asm, "m", 1);
+        operandoEnPilaAArgumento(fd_asm, 1);
+        llamarFuncion(fd_asm, "factorial", 0);
 
         escribir_operando(fd_asm,"m",1);
         escribir_elemento_vector(fd_asm,"v", 4, 1);
         asignarDestinoEnPila(fd_asm,0);
 
     	//vb[m] = grande(m,10);
-    	escribir_operando(fasm, "m", 1);
-        operandoEnPilaAArgumento(fasm, 1);
-        escribir_operando(fasm, "10", 0);
-        operandoEnPilaAArgumento(fasm, 0);
-        llamarFuncion(fasm, "grande", 1);
+    	escribir_operando(fd_asm, "m", 1);
+        operandoEnPilaAArgumento(fd_asm, 1);
+        escribir_operando(fd_asm, "10", 0);
+        operandoEnPilaAArgumento(fd_asm, 0);
+        llamarFuncion(fd_asm, "grande", 1);
 
         escribir_operando(fd_asm, "m", 1);
     	escribir_elemento_vector(fd_asm,"vb", 4, 1);
