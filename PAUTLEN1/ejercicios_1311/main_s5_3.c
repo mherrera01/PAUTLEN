@@ -43,8 +43,11 @@ int main (int argc, char ** argv)
          */
         declararFuncion(fd_asm, "factorial", 0);
 
+        getiqueta++;
+        cima_etiquetas++;
+        etiquetas[cima_etiquetas]=getiqueta;
+
         escribirParametro(fd_asm,0,1);
-        operandoEnPilaAArgumento(fd_asm, 1);
         escribir_operando(fd_asm,"0",0);
         igual(fd_asm,1,0,etiqueta);
 
@@ -52,17 +55,27 @@ int main (int argc, char ** argv)
 
         //RETORNO 1
         escribir_operando(fd_asm,"1",0);
-        retornarFuncion(fd_asm,0);
 
         etiqueta = etiquetas[cima_etiquetas];
         ifthenelse_fin_then(fd_asm, etiqueta);
 
         //RETORNO N * FACTORIAL(N-1);
+        escribirParametro(fd_asm,0,1);
 
+
+        escribirParametro(fd_asm,0,1);
+        escribir_operando(fd_asm,"1",0);
+        restar(fd_asm,1,0);
+
+
+        llamarFuncion(fd_asm,"factorial",1);
+        multiplicar(fd_asm,1,0);
 
         etiqueta = etiquetas[cima_etiquetas];
         ifthenelse_fin(fd_asm, etiqueta);
         cima_etiquetas--;
+
+        retornarFuncion(fd_asm,0);
 
 
         /**************************************
