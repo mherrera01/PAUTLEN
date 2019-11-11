@@ -456,7 +456,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "ej_flex_1.l"
 #line 2 "ej_flex_1.l"
-#include <stdio.h>
+#include <stdio.h> 
 #include "tokens.h"
 #line 462 "lex.yy.c"
 #line 463 "lex.yy.c"
@@ -738,32 +738,32 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 7 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_MAIN); }
+{ return TOK_MAIN; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 8 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_ARRAY); }
+{ return TOK_ARRAY; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 9 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_INT); }
+{ return TOK_INT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 10 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_IF); }
+{ return TOK_IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 11 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_ELSE); }
+{ return TOK_ELSE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 12 "ej_flex_1.l"
-{ printf("reconocido %d\n", TOK_WHILE); }
+{ return TOK_WHILE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -1777,8 +1777,8 @@ void yyfree (void * ptr )
 
 #line 13 "ej_flex_1.l"
 
-int main()
+/*int main()
 {
 return yylex();
-}
+}*/
 

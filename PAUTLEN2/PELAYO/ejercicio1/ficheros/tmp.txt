@@ -1,0 +1,17 @@
+%{
+#include <stdio.h> 
+#include "tokens.h"
+%}
+%option noyywrap
+%%
+MAIN { return TOK_MAIN; }
+ARRAY { return TOK_ARRAY; }
+INT { return TOK_INT; }
+IF { return TOK_IF; }
+ELSE { return TOK_ELSE; }
+WHILE { return TOK_WHILE; }
+%%
+int main()
+{
+return yylex();
+}
