@@ -19,6 +19,9 @@ while { fprintf(salida,"%s ",yytext); return TOK_WHILE; }
 "*" { fprintf(salida,"%s ",yytext); return TOK_ASTERISCO; }
 "+" { fprintf(salida,"%s ",yytext); return TOK_MAS; }
 "<=" { fprintf(salida,"%s ",yytext); return TOK_MENORIGUAL; }
+"{" { fprintf(salida,"%s ",yytext); return TOK_LLAVEIZQUIERDA; }
+"}" { fprintf(salida,"%s ",yytext); return TOK_LLAVEDERECHA; }
+[a-zA-Z][a-zA-Z0-9]* { fprintf(salida,"%s ",yytext); return TOK_IDENTIFICADOR; }
 %%
 int main()
 {

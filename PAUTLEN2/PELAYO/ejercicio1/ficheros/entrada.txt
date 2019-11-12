@@ -1,6 +1,6 @@
-MAIN
-ARRAY
-INT
-IF
-ELSE
-WHILE
+main
+array
+int
+if
+else
+while

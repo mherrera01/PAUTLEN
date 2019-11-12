@@ -46,6 +46,42 @@ int main(int argc, char** argv){
 			case TOK_WHILE:
 				fprintf(salida,"TOK_WHILE %d\n", valor_patron);
 				break;
+
+			case TOK_PUNTOYCOMA:
+				fprintf(salida,"TOK_PUNTOYCOMA %d\n", valor_patron);
+				break;
+
+			case TOK_PARENTESISIZQUIERDO:
+				fprintf(salida,"TOK_PARENTESISIZQUIERDO %d\n", valor_patron);
+				break;
+
+			case TOK_PARENTESISDERECHO:
+				fprintf(salida,"TOK_PARENTESISDERECHO %d\n", valor_patron);
+				break;
+
+			case TOK_ASTERISCO:
+				fprintf(salida,"TOK_ASTERISCO %d\n", valor_patron);
+				break;
+
+			case TOK_MAS:
+				fprintf(salida,"TOK_MAS %d\n", valor_patron);
+				break;
+
+			case TOK_MENORIGUAL:
+				fprintf(salida,"TOK_MENORIGUAL %d\n", valor_patron);
+				break;
+
+			case TOK_LLAVEIZQUIERDA:
+				fprintf(salida,"TOK_LLAVEIZQUIERDA %d\n", valor_patron);
+				break;
+
+			case TOK_LLAVEDERECHA:
+				fprintf(salida,"TOK_LLAVEDERECHA %d\n", valor_patron);
+				break;
+
+			case TOK_IDENTIFICADOR:
+				fprintf(salida,"TOK_IDENTIFICADOR %d\n", valor_patron);
+				break;
 			default:
 				printf("\nError producido detectando una expresion");
 

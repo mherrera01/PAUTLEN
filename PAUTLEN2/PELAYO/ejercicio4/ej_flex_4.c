@@ -63,12 +63,48 @@ int main(int argc, char** argv){
 				fprintf(salida,"TOK_ASTERISCO %d\n", valor_patron);
 				break;
 
+			case TOK_DIVISION:
+				fprintf(salida,"TOK_DIVISION %d\n", valor_patron);
+				break;
+
 			case TOK_MAS:
 				fprintf(salida,"TOK_MAS %d\n", valor_patron);
+				break;
+	
+			case TOK_MENOS:
+				fprintf(salida,"TOK_MENOS %d\n", valor_patron);
 				break;
 
 			case TOK_MENORIGUAL:
 				fprintf(salida,"TOK_MENORIGUAL %d\n", valor_patron);
+				break;
+
+			case TOK_MAYORIGUAL:
+				fprintf(salida,"TOK_MAYORIGUAL %d\n", valor_patron);
+				break;
+
+			case TOK_MENOR:
+				fprintf(salida,"TOK_MENOR %d\n", valor_patron);
+				break;
+
+			case TOK_MAYOR:
+				fprintf(salida,"TOK_MAYOR %d\n", valor_patron);
+				break;
+
+			case TOK_LLAVEIZQUIERDA:
+				fprintf(salida,"TOK_LLAVEIZQUIERDA %d\n", valor_patron);
+				break;
+
+			case TOK_LLAVEDERECHA:
+				fprintf(salida,"TOK_LLAVEDERECHA %d\n", valor_patron);
+				break;
+
+			case TOK_IDENTIFICADOR:
+				fprintf(salida,"TOK_IDENTIFICADOR %d\n", valor_patron);
+				break;
+
+			case TOK_CONSTANTE_ENTERA:
+				fprintf(salida,"TOK_CONSTANTE_ENTERA %d\n", valor_patron);
 				break;
 
 			default:
@@ -83,3 +119,4 @@ int main(int argc, char** argv){
 
 
 }
+
