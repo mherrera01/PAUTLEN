@@ -3,10 +3,8 @@ CFLAGS = -Wall -g
 OBJ = *.o
 
 
-all: lex.yy.o
-	$(CC) $(CFLAGS) -o pruebaMorfo lex.yy.o
-lex.yy.o: lex.yy.c tokens.h
-	$(CC) $(CFLAGS) -c lex.yy.c
+all: lex.yy.c
+	$(CC) $(CFLAGS) -o pruebaMorfo lex.yy.c analizar.c
 lex.yy.c: alfa.l
 	flex alfa.l
 clean:
