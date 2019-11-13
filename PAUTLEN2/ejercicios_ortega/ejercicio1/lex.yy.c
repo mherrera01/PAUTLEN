@@ -459,9 +459,8 @@ char *yytext;
 #include <stdio.h>
 #include <stdlib.h>
 #include "tokens.h"
-extern FILE * salida;
+#line 463 "lex.yy.c"
 #line 464 "lex.yy.c"
-#line 465 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -678,9 +677,9 @@ YY_DECL
 		}
 
 	{
-#line 9 "ej_flex_1.l"
+#line 8 "ej_flex_1.l"
 
-#line 684 "lex.yy.c"
+#line 683 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -739,40 +738,40 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 10 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_MAIN; }
+#line 9 "ej_flex_1.l"
+{ return TOK_MAIN; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 11 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_ARRAY; }
+#line 10 "ej_flex_1.l"
+{ return TOK_ARRAY; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 12 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_INT; }
+#line 11 "ej_flex_1.l"
+{ return TOK_INT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 13 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_IF; }
+#line 12 "ej_flex_1.l"
+{ return TOK_IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 14 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_ELSE; }
+#line 13 "ej_flex_1.l"
+{ return TOK_ELSE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 15 "ej_flex_1.l"
-{ fprintf(salida,"%s ",yytext); return TOK_WHILE; }
+#line 14 "ej_flex_1.l"
+{ return TOK_WHILE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 16 "ej_flex_1.l"
+#line 15 "ej_flex_1.l"
 ECHO;
 	YY_BREAK
-#line 776 "lex.yy.c"
+#line 775 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1777,11 +1776,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 16 "ej_flex_1.l"
+#line 15 "ej_flex_1.l"
 
-/*int main()
-{
-return yylex();
-}*/
 
 

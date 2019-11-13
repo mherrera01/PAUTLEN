@@ -1,6 +1,0 @@
-main TOK_MAIN 100
-array TOK_ARRAY 103
-int TOK_INT 101
-if TOK_IF 105
-else TOK_ELSE 106
-while TOK_WHILE 107

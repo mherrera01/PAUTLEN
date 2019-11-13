@@ -1,0 +1,6 @@
+TOK_MAIN 100 main
+TOK_ARRAY 103 array
+TOK_INT 101 int
+TOK_IF 105 if
+TOK_ELSE 106 else
+TOK_WHILE 107 while
