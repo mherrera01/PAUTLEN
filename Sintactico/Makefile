@@ -1,5 +1,5 @@
 CC = gcc -ansi -pedantic
-CFLAGS = -Wall -g
+CFLAGS = -g
 OBJECTS = lex.yy.o y.tab.o pruebaSintactico.o
 
 all: $(OBJECTS)
