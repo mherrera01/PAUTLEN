@@ -61,7 +61,7 @@
 %left TOK_MAYOR TOK_MENOR TOK_MAYORIGUAL TOK_MENORIGUAL
 %left TOK_MAS TOK_MENOS
 %left TOK_DIVISION TOK_ASTERISCO
-%left TOK_NOT
+%left TOK_NOT MENOSU
 %left TOK_PARENTESISIZQUIERDO TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO TOK_CORCHETEDERECHO
 
 %start programa
@@ -161,7 +161,7 @@ exp: exp TOK_MAS exp {fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");}
     | exp TOK_MENOS exp {fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");}
     | exp TOK_DIVISION exp {fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");}
     | exp TOK_ASTERISCO exp {fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");}
-    | TOK_MENOS exp {fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");}
+    | TOK_MENOS exp %prec MENOSU {fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");}
     | exp TOK_AND exp {fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");}
     | exp TOK_OR exp {fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");}
     | TOK_NOT exp {fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");}

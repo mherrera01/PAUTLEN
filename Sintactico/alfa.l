@@ -24,6 +24,8 @@ while {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytex
 scanf {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_SCANF;}
 printf {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_PRINTF;}
 return {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_RETURN;}
+true {col+=yyleng; strcpy(yylval.string,yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_TRUE;}
+false {col+=yyleng; strcpy(yylval.string,yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_FALSE;}
 ";" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_PUNTOYCOMA;}
 "," {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_COMA;}
 "(" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_PARENTESISIZQUIERDO;}
@@ -46,8 +48,6 @@ return {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yyte
 ">=" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MAYORIGUAL;}
 "<" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MENOR;}
 ">" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MAYOR;}
-true {col+=yyleng; strcpy(yylval.string,yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_TRUE;}
-false {col+=yyleng; strcpy(yylval.string,yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_FALSE;}
 [a-zA-Z][a-zA-Z0-9]* {col+=yyleng; strcpy(yylval.string,yytext); if(yyleng<=100){fprintf(yyout,";D:\t%s\n",yytext);}else{fprintf(stdout,"****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",line,col-yyleng,yytext); error=1; return TOK_ERROR;}; return TOK_IDENTIFICADOR;}
 [0-9]+ {col+=yyleng; yylval.num=atoi(yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_CONSTANTE_ENTERA;}
 . {error=1; col+=yyleng; strcpy(yylval.string,yytext); fprintf(stdout,"****Error morfologico en [lin %d, col %d]: simbolo no permitido (%s)\n",line,col-yyleng,yytext); return TOK_ERROR;}
