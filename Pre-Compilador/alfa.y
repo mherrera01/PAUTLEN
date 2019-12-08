@@ -32,6 +32,7 @@
 %type <atributos> constante_entera
 %type <atributos> constante
 
+/*FALTAN MUCHOS MAS*/
 
 %token TOK_MAIN
 %token TOK_INT

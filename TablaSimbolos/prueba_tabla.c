@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	FILE * yyin;
 	FILE * yyout;
 	int valor=0;
-	entry_t * entrada;
+	INFO_SIMBOLO * entrada;
 	int aux;
 
     if(argc < 3){
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 	    if(strncmp(resultado[0],"cierre",7) == 0 && atoi(resultado[1]) == -999){ //CIERRE AMBITO
 	    	printf("CIERRE \n");
 	    	CerrarFuncion();
-	    	ImprimirTablaGlobal();
+	    	//ImprimirTablaGlobal();
 	    	global=1;
 	    	fprintf(yyout,"%s\n",resultado[0]);
 	    	aux = contador - 1;
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 	    		printf("AMBITO GLOBAL ==> 1 palabra BUSCAMOS\n");
 		    	if((entrada = UsoGlobal(resultado[0])) != NULL){
 		    		printf("Elemento %s encontrado en la tabla GLOBAL\n",resultado[0]);
-		    		fprintf(yyout,"%s %d\n",entrada->key, entrada->adicional1);
+		    		fprintf(yyout,"%s %d\n",entrada->lexema, entrada->adicional1);
 		    	}else{
 		    		printf("Elemento %s no encontrado en la tabla GLOBAL\n",resultado[0]);
 		    		fprintf(yyout,"%s -1\n",resultado[0]);
@@ -120,18 +120,10 @@ int main(int argc, char* argv[])
 	    		printf("AMBITO LOCAL ==> 1 palabra BUSCAMOS\n");
 		    	if((entrada = UsoLocal(resultado[0])) != NULL){
 		    		printf("Elemento %s encontrado en la tabla LOCAL\n",resultado[0]);
-		    		fprintf(yyout,"%s %d\n",entrada->key, entrada->adicional1);
+		    		fprintf(yyout,"%s %d\n",entrada->lexema, entrada->adicional1);
 		    	}else{
 		    		printf("Elemento %s no encontrado en la tabla LOCAL\n",resultado[0]);
-		    		//BUSCAMOS EN LA GLOBAL ENTONCES
-		    		if((entrada = UsoGlobal(resultado[0])) != NULL){
-		    			printf("Elemento %s encontrado en la tabla GLOBAL\n",resultado[0]);
-		    			fprintf(yyout,"%s %d\n",entrada->key, entrada->adicional1);
-		    		}else{
-		    			printf("Elemento %s no encontrado en la tabla GLOBAL\n",resultado[0]);
-		    			fprintf(yyout,"%s -1\n",resultado[0]);
-		    		}
-		    		
+		    		fprintf(yyout,"%s -1\n",resultado[0]);
 		    	}
 	    	}
 	    }

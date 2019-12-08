@@ -3,13 +3,16 @@
 
 #include "tablaHash.h"
 
+#define TAM_GLOBAL 100
+#define TAM_LOCAL 100
+
 STATUS DeclararGlobal(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE clase, int valor1, int valor2);
 
 STATUS DeclararLocal(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE clase, int valor1, int valor2);
 
-entry_t * UsoGlobal(char * identificador);
+INFO_SIMBOLO * UsoGlobal(char * identificador);
 
-entry_t * UsoLocal(char * identificador);
+INFO_SIMBOLO * UsoLocal(char * identificador);
 
 STATUS DeclararFuncion(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE clase, int valor1, int valor2);
 

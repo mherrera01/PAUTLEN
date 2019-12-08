@@ -32,6 +32,8 @@ entry_t *ht_pair(const char *key, int c, int t, int e_v, int a1, int a2) {
     entry->adicional1 = a1;
     entry->adicional2 = a2;
 
+    entry->next = NULL;
+
     return entry;
 }
 
@@ -55,12 +57,28 @@ STATUS ht_set(ht_t *hashtable, const char *key, int c, int t, int e_v, int a1, i
 
     entry_t *entry = hashtable->entries[bucket];
 
-    if (entry == NULL) {
+    if (entry == NULL) { //NO ENTRADA Y SE METE
         hashtable->entries[bucket] = ht_pair(key, c, t, e_v, a1, a2);
         return OK;
-    }else{
-        return ERROR;
     }
+
+    entry_t *prev;
+
+    // walk through each entry until either the end is
+    // reached or a matching key is found
+    while (entry != NULL) {
+        // check key
+        if (strcmp(entry->key, key) == 0) { //NO SE MODIFICA, AUNQUE HAYAMOS ENCONTRADO LA ENTRADA
+            return ERROR;
+        }
+
+        // walk to next
+        prev = entry;
+        entry = prev->next;
+    }
+
+    // end of chain reached without a match, add new
+    prev->next = ht_pair(key, c, t, e_v, a1, a2);
 }
 
 entry_t * ht_get(ht_t *hashtable, const char *key) {
@@ -73,11 +91,26 @@ entry_t * ht_get(ht_t *hashtable, const char *key) {
         return NULL;
     }
 
-    return entry;
+
+    // walk through each entry in the slot, which could just be a single thing
+    while (entry != NULL) {
+        // return value if found
+        if (strcmp(entry->key, key) == 0) {
+            return entry;
+        }
+
+        // proceed to next key if available
+        entry = entry->next;
+    }
+
+    // reaching here means there were >= 1 entries but no key match
+    return NULL;
 }
 
 STATUS ht_destroy(ht_t *hashtable) {
     
+    entry_t * aux=NULL;
+
     if(hashtable == NULL){
         return ERROR;
     }
@@ -90,8 +123,13 @@ STATUS ht_destroy(ht_t *hashtable) {
             continue;
         }
 
-        free(entry->key);
-        free(entry);
+        while(entry != NULL){
+            aux = entry;
+            entry = entry->next;
+            free(aux->key);
+            free(aux);
+        }
+        
     }
 
     free(hashtable->entries);

@@ -36,6 +36,7 @@ typedef struct entry_t {
     CLASE escalar_vector;
     int adicional1; /*valor si es escalar, longitud si es vector y numero de parametro si es funcion*/
     int adicional2; /*posicion en llamada a funcion si es parametro, posicion de declaracion si variable es local, numero de variables locales si es funcion*/
+    struct entry_t *next;
 } entry_t;/*Categoria del elemento*/
 
 typedef struct {

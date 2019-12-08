@@ -48,7 +48,7 @@ false {col+=yyleng; strcpy(yylval.string,yytext); fprintf(yyout,";D:\t%s\n",yyte
 ">=" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MAYORIGUAL;}
 "<" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MENOR;}
 ">" {col+=yyleng; strcpy(yylval.string,yytext);fprintf(yyout,";D:\t%s\n",yytext); return TOK_MAYOR;}
-[a-zA-Z][a-zA-Z0-9]* {col+=yyleng; strcpy(yylval.string,yytext); if(yyleng<=100){fprintf(yyout,";D:\t%s\n",yytext);}else{fprintf(stdout,"****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",line,col-yyleng,yytext); error=1; return TOK_ERROR;}; return TOK_IDENTIFICADOR;}
 [0-9]+ {col+=yyleng; yylval.num=atoi(yytext); fprintf(yyout,";D:\t%s\n",yytext); return TOK_CONSTANTE_ENTERA;}
+[a-zA-Z][a-zA-Z0-9]* {col+=yyleng; strcpy(yylval.string,yytext); if(yyleng<=100){fprintf(yyout,";D:\t%s\n",yytext);}else{fprintf(stdout,"****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",line,col-yyleng,yytext); error=1; return TOK_ERROR;}; return TOK_IDENTIFICADOR;}
 . {error=1; col+=yyleng; strcpy(yylval.string,yytext); fprintf(stdout,"****Error morfologico en [lin %d, col %d]: simbolo no permitido (%s)\n",line,col-yyleng,yytext); return TOK_ERROR;}
 %%

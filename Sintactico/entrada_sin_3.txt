@@ -3,7 +3,6 @@ main
 int x;
 int y;
 int z;
-boolean a = true;
 
 z=x+y;
 printf $;
@@ -13,7 +12,6 @@ printf $;
 // Este programa tiene un error morfologico que genera
 // el siguiente mensaje
 // ****Error en [lin 8, col 8]: simbolo no permitido ($)
-
 
 
 
