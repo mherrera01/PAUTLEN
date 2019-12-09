@@ -21,4 +21,4 @@ y.tab.h: alfa.y
 	$ bison -d -y -v alfa.y
 
 clean:
-	rm -rf pruebaSintactico *.o lex.yy.c y.tab.c *.h y.output
+	rm -rf pruebaSintactico *.o lex.yy.c y.tab.c y.output

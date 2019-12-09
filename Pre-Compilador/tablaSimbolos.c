@@ -7,13 +7,27 @@
 static TABLA_HASH * tablaSimbolosLocal = NULL;
 static TABLA_HASH * tablaSimbolosGlobal = NULL;
 
+TABLA_HASH * CrearTablaGlobal(){
+    if(tablaSimbolosGlobal == NULL){
+       tablaSimbolosGlobal = crear_tabla(TAM_GLOBAL);
+       return tablaSimbolosGlobal;
+    }
+}
+
+TABLA_HASH * CrearTablaLocal(){
+    if(tablaSimbolosLocal == NULL){
+       tablaSimbolosLocal = crear_tabla(TAM_LOCAL);
+       return tablaSimbolosLocal;
+    }
+}
+
 
 
 STATUS DeclararGlobal(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE clase, int valor1, int valor2){
 
     /*Esta creada, NO ==> CREAR TABLA GLOBAL E INSERTAR*/
     if(tablaSimbolosGlobal == NULL){
-        tablaSimbolosGlobal = crear_tabla(TAM_GLOBAL);
+        tablaSimbolosGlobal = CrearTablaGlobal();
         return insertar_simbolo(tablaSimbolosGlobal,identificador, categoria,tipo, clase, valor1, valor2);
     }else{
         return insertar_simbolo(tablaSimbolosGlobal,identificador, categoria,tipo, clase, valor1, valor2);
@@ -24,7 +38,7 @@ STATUS DeclararLocal(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE 
 
     /*Esta creada, NO ==> CREAR TABLA LOCAL E INSERTAR*/
     if(tablaSimbolosLocal == NULL){
-        tablaSimbolosLocal = crear_tabla(TAM_LOCAL);
+        tablaSimbolosLocal = CrearTablaLocal();
         return insertar_simbolo(tablaSimbolosLocal,identificador, categoria,tipo, clase, valor1, valor2);
     }else{
         return insertar_simbolo(tablaSimbolosLocal,identificador, categoria,tipo, clase, valor1, valor2);
@@ -56,6 +70,23 @@ INFO_SIMBOLO * UsoLocal(char * identificador){
     return UsoGlobal(identificador);
 }
 
+INFO_SIMBOLO * UsoExclusivoGlobal(char * identificador){
+    if(tablaSimbolosGlobal != NULL){
+        return buscar_simbolo(tablaSimbolosGlobal, identificador);
+    }else{ //TODAVIA no hay tabla creada
+        return NULL;
+    }
+}
+
+INFO_SIMBOLO * UsoExclusivoLocal(char * identificador){
+    if(tablaSimbolosLocal != NULL){
+        return buscar_simbolo(tablaSimbolosLocal, identificador);
+    }else{ //TODAVIA no hay tabla creada
+        return NULL;
+    }
+}
+
+
 STATUS DeclararFuncion(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE clase, int valor1, int valor2){
 
     if (tablaSimbolosGlobal == NULL) {
@@ -71,7 +102,7 @@ STATUS DeclararFuncion(char * identificador,CATEGORIA categoria, TIPO tipo, CLAS
         liberar_tabla(tablaSimbolosLocal);
     }
 
-    tablaSimbolosLocal = crear_tabla(TAM_LOCAL);
+    tablaSimbolosLocal = CrearTablaLocal();
     
     if (tablaSimbolosLocal != NULL) {
         return insertar_simbolo(tablaSimbolosLocal,identificador,categoria,tipo,clase, valor1,valor2);
@@ -100,3 +131,4 @@ void ImprimirTablaGlobal(){
 void ImprimirTablaLocal(){
     tabla_dump(tablaSimbolosLocal);
 }
+

@@ -118,12 +118,17 @@ int main(int argc, char* argv[])
 		    	}
 	    	}else if(global==0){
 	    		printf("AMBITO LOCAL ==> 1 palabra BUSCAMOS\n");
-		    	if((entrada = UsoLocal(resultado[0])) != NULL){
+		    	if((entrada = UsoExclusivoLocal(resultado[0])) != NULL){
 		    		printf("Elemento %s encontrado en la tabla LOCAL\n",resultado[0]);
 		    		fprintf(yyout,"%s %d\n",entrada->lexema, entrada->adicional1);
 		    	}else{
-		    		printf("Elemento %s no encontrado en la tabla LOCAL\n",resultado[0]);
-		    		fprintf(yyout,"%s -1\n",resultado[0]);
+		    		if((entrada = UsoExclusivoGlobal(resultado[0])) != NULL){
+		    			printf("Elemento %s encontrado en la tabla GLOBAL\n",resultado[0]);
+		    			fprintf(yyout,"%s %d\n",entrada->lexema, entrada->adicional1);
+		    		}else{
+		    			printf("Elemento %s no encontrado en la tabla LOCAL ni GLOBAL\n",resultado[0]);
+		    			fprintf(yyout,"%s -1\n",resultado[0]);
+		    		}
 		    	}
 	    	}
 	    }
