@@ -2,6 +2,7 @@ main {
 
         int x1, x2;
         boolean y1;
+        array int [1] z; //asi se definen los arrays
 
         scanf x1;
         scanf x2;

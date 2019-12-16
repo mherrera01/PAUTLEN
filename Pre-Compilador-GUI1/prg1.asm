@@ -4,6 +4,7 @@ segment .data
 	err_indice_vector db "Indice de vector fuera de rango 0", 0
 segment .bss
 	__esp resd 1
+	_z resd 1
 	_y1 resd 1
 	_x2 resd 1
 	_x1 resd 1
