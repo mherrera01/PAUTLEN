@@ -4,7 +4,7 @@ segment .data
 	err_indice_vector db "Indice de vector fuera de rango 0", 0
 segment .bss
 	__esp resd 1
-	_x3 resd 1
+	_y1 resd 1
 	_x2 resd 1
 	_x1 resd 1
 segment .text
@@ -21,56 +21,62 @@ main:
 	push dword _x2
 	call scan_int
 	add esp, 4
+	push dword _y1
+	call scan_boolean
+	add esp, 4
 	push dword _x1
-	pop dword eax
-	mov dword eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
 	push dword _x2
+	pop dword ecx
 	pop dword eax
 	mov dword eax, [eax]
+	mov dword ecx, [ecx]
+	cmp eax,ecx
+	jz near true_igual_0
+	mov dword eax, 0
 	push dword eax
+	jmp near continua_igual_0
+true_igual_0:
+	mov dword eax,1
+	push dword eax
+continua_igual_0:
+	pop dword eax
+	cmp eax, 0
+	je near _fin_condicional_simple_1
+	push dword _y1
+	pop dword eax
+	mov dword eax, [eax]
+	cmp eax, 0
+	je near _fin_condicional_simple_2
+	push dword 110
 	call print_int
 	add esp, 4
 	call print_endofline
-	push dword 3
-	push dword _x1
-	pop dword ebx
-	pop dword eax
-	mov dword ebx, [ebx]
-	add eax, ebx
-	push dword eax
-	push dword _x2
-	pop dword ebx
-	pop dword eax
-	mov dword ebx, [ebx]
-	add eax, ebx
-	push dword eax
+	jmp near _fin_condicional_compuesto_2
+_fin_condicional_simple_2:
+	push dword 111
 	call print_int
 	add esp, 4
 	call print_endofline
-	push dword _x3
-	call scan_int
-	add esp, 4
-	push dword _x2
-	push dword _x3
-	pop dword ebx
+_fin_condicional_compuesto_2:
+	jmp near _fin_condicional_compuesto_1
+_fin_condicional_simple_1:
+	push dword _y1
 	pop dword eax
 	mov dword eax, [eax]
-	mov dword ebx, [ebx]
-	add eax, ebx
-	push dword eax
-	pop dword eax
-	mov dword [_x1], eax
-	push dword _x1
-	pop dword eax
-	mov dword eax, [eax]
-	push dword eax
+	cmp eax, 0
+	je near _fin_condicional_simple_3
+	push dword 10
 	call print_int
 	add esp, 4
 	call print_endofline
+	jmp near _fin_condicional_compuesto_3
+_fin_condicional_simple_3:
+	push dword 11
+	call print_int
+	add esp, 4
+	call print_endofline
+_fin_condicional_compuesto_3:
+_fin_condicional_compuesto_1:
 	jmp near fin
 fin_error_division:
 	push dword err_div0

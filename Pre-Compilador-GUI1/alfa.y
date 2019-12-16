@@ -31,11 +31,15 @@
     int cuantos_no=0;
     char aux_char[100];
     int en_explist=0;
+    int etiqueta=1;
 
     /*Parametros*/
     int num_parametros_actual=0;
     int pos_parametro_actual=0;
+    int num_parametros_llamada_actual=0;
 
+    /*Etiquetas*/
+    int num_comparaciones=0;
 %}
 %union
         {
@@ -55,6 +59,9 @@
 %type <atributos> identificador
 %type <atributos> fn_declaracion
 %type <atributos> fn_name
+%type <atributos> if_exp
+%type <atributos> if_exp_sentencias
+
 
 /*Simbolos terminales con valor semantico*/
 
@@ -307,13 +314,13 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
 
     /*quiere decir que es parametro*/
     }else if(aux->categoria == PARAMETRO){
-        escribir_operando(yyout,$3.lexema,$3.direcciones?0:1);
+        escribir_operando(yyout,$3.lexema,$3.direcciones);
         escribirParametro(yyout,aux->adicional2,num_parametros_actual);
         asignarDestinoEnPila(yyout,$3.direcciones);
 
     /*quiere decir que es local*/
     }else{
-        escribir_operando(yyout,$3.lexema,$3.direcciones?0:1);
+        escribir_operando(yyout,$3.lexema,$3.direcciones);
         escribirVariableLocal(yyout,aux->adicional2);
         asignarDestinoEnPila(yyout,$3.direcciones);
     }
@@ -341,9 +348,42 @@ fprintf(stdout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {fprintf(stdout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
 ;
 
-condicional: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(stdout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");}
-        | TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEIZQUIERDA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(stdout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");}
-;
+condicional: if_exp_sentencias TOK_LLAVEDERECHA {
+
+
+ifthenelse_fin(yyout, $1.etiqueta);
+
+fprintf(stdout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
+
+
+}
+        | if_exp_sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+
+ifthenelse_fin(yyout, $1.etiqueta);
+
+fprintf(stdout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
+
+};
+
+if_exp_sentencias: if_exp sentencias {
+    $$.etiqueta = $1.etiqueta;
+    ifthenelse_fin_then(yyout, $$.etiqueta);
+}
+
+
+if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA {
+    
+    if($3.tipo != BOOLEAN){
+        fprintf(stdout,"****Error Semantico en la linea %d: la comparacion no es de tipo booleano\n",line);
+        return -1;
+    }
+
+    $$.etiqueta = etiqueta++;
+    ifthen_inicio(yyout, $3.direcciones, $$.etiqueta);
+}
+
+
+
 
 bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(stdout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
 ;
@@ -608,7 +648,36 @@ exp: exp TOK_MAS exp {
                 operandoEnPilaAArgumento(yyout,$1.direcciones);
             }
         }else{
-            //ERROR VARIABLE
+            
+            aux =  UsoGlobal($1.lexema);
+            
+            if(aux != NULL){
+                
+                if(aux->categoria == FUNCION){
+                    printf("****Error Semantico en la linea %d: Variable no es de la categoria correspondiente\n", line);
+                    return -1;
+                }
+
+                if(aux->clase == VECTOR){
+                    printf("****Error Semantico en la linea %d: Variable no es de la clase correspondiente\n", line);
+                    return -1;
+                }
+
+                $$.tipo = aux->tipo;
+                $$.direcciones = 1;
+
+                if(en_explist==0){
+                    escribir_operando(yyout,$1.lexema,1); //Direccion
+                }else{
+                    escribir_operando(yyout,$1.lexema,1); //Direccion
+                    operandoEnPilaAArgumento(yyout,$1.direcciones); //Valor
+                }
+
+
+            }else{
+                printf("****Error Semantico en la linea %d: LLamada a variable sin definir\n", line);
+                return -1;
+            }
         }
         
     }else{ //BUSQUEDA EN GLOBAL
@@ -637,7 +706,7 @@ exp: exp TOK_MAS exp {
 
 
         }else{
-            printf("****Error Semantico en la linea %d: LLamada a variable sin definir\n", line);
+            fprintf(stdout,"****Error Semantico en la linea %d: LLamada a variable sin definir\n", line);
             return -1;
         }
 
@@ -682,13 +751,32 @@ exp: exp TOK_MAS exp {
 
 }
     | TOK_IDENTIFICADOR TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
+
+    if((aux = UsoLocal($1.lexema)) == NULL){
+        fprintf(stdout,"****Error Semantico en la linea %d: la funcion %s no ha sido declarada\n",line,$1.lexema);
+        return -1;
+    }
+
+    if(aux->categoria != FUNCION){
+        fprintf(stdout,"****Error Semantico en la linea %d: la variable no esta declarada como funcion\n",line);
+        return -1;
+    }
+
+    if(aux->adicional1 != num_parametros_llamada_actual){
+        fprintf(stdout,"****Error Semantico en la linea %d: numero incorrecto de parametros\n",line);
+        return -1;
+    }
+
     
     fprintf(stdout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
 
 };
 
 
-lista_expresiones: exp resto_lista_expresiones {fprintf(stdout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
+lista_expresiones: exp resto_lista_expresiones {
+num_parametros_llamada_actual++;
+
+fprintf(stdout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
                 | /* LAMBDA */ {fprintf(stdout, ";R90:\t<lista_expresiones> ::=\n");}
 ;
 
@@ -696,12 +784,106 @@ resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones {fprintf(stdout, "
                     | /* LAMBDA */ {fprintf(stdout, ";R92:\t<resto_lista_expresiones> ::=\n");}
 ;
 
-comparacion: exp TOK_IGUAL exp {fprintf(stdout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");}
-        | exp TOK_DISTINTO exp {fprintf(stdout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");}
-        | exp TOK_MENORIGUAL exp {fprintf(stdout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");}
-        | exp TOK_MAYORIGUAL exp {fprintf(stdout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");}
-        | exp TOK_MENOR exp {fprintf(stdout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");}
-        | exp TOK_MAYOR exp {fprintf(stdout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");}
+comparacion: exp TOK_IGUAL exp {
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+igual(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+fprintf(stdout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
+
+}
+        | exp TOK_DISTINTO exp {
+
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+distinto(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+
+fprintf(stdout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
+
+}
+        | exp TOK_MENORIGUAL exp {
+
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+menor_igual(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+
+fprintf(stdout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
+
+}
+        | exp TOK_MAYORIGUAL exp {
+
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+mayor_igual(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+fprintf(stdout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
+
+}
+        | exp TOK_MENOR exp {
+
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+menor(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+
+fprintf(stdout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
+
+}
+        | exp TOK_MAYOR exp {
+
+
+if($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+    fprintf(stdout,"****Error Semantico en la linea %d: las variables a comparar no pueden ser de tipo booleano\n",line);
+    return -1;
+}
+
+$$.tipo = BOOLEAN;
+$$.direcciones = 0;
+
+mayor(yyout,$1.direcciones,$3.direcciones,num_comparaciones++);
+
+
+fprintf(stdout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
+
+}
 ;
 
 constante:
