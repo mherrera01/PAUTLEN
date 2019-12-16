@@ -34,6 +34,7 @@
 
     /*Parametros*/
     int num_parametros_actual=0;
+    int pos_parametro_actual=0;
 
 %}
 %union
@@ -52,6 +53,8 @@
 %type <atributos> constante_entera
 %type <atributos> constante_logica
 %type <atributos> identificador
+%type <atributos> fn_declaracion
+%type <atributos> fn_name
 
 /*Simbolos terminales con valor semantico*/
 
@@ -180,12 +183,78 @@ identificadores: identificador {fprintf(stdout, ";R18:\t<identificadores> ::= <i
             | identificador TOK_COMA identificadores {fprintf(stdout, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");}
 ;
 
-funciones: funcion funciones {fprintf(stdout, ";R20:\t<funciones> ::= <funcion> <funciones>\n");}
-        | /* LAMBDA */ {fprintf(stdout, ";R21:\t<funciones> ::=\n");}
+funciones: funcion funciones {fprintf(yyout, ";R20:\t<funciones> ::= <funcion> <funciones>\n");}
+        | /* LAMBDA */ {fprintf(yyout, ";R21:\t<funciones> ::=\n");}
 ;
 
-funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA {fprintf(stdout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");}
-;
+
+fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR{
+    
+    aux = UsoGlobal($3.lexema);
+
+    if(aux != NULL){ //Error porque el identificador ya existe en este ambito
+        printf("****Error Semantico en la linea %d: Declaracion doble de variable\n", line);
+    }else{
+        if(DeclararGlobal($3.lexema,FUNCION,tipo_actual,clase_actual,tamanio_vector_actual,pos_variable_local_actual) == OK){
+            if(CrearTablaLocal() != NULL){
+                if(DeclararLocal($3.lexema,FUNCION,tipo_actual,clase_actual,tamanio_vector_actual,pos_variable_local_actual) == OK){
+                    pos_variable_local_actual=1;
+                    num_variables_locales_actual=0;
+                    pos_parametro_actual=0;
+                    num_parametros_actual=0;
+                    tamanio_vector_actual=0;
+                    //retornoFuncion = tipoActual;
+                    sprintf($$.lexema,"%s",$3.lexema);
+                }else{
+                    fprintf(stdout,"****Error Semantico en la linea %d: fallo al declarar la funcion %s\n",line,$3.lexema);
+                }
+            }else{
+                fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear el ambito local\n",line);
+            }
+        }else{
+            fprintf(stdout,"****Error Semantico en la linea %d: fallo al declarar la funcion %s en el ambito global",line,$3.lexema);
+        }
+    }
+};
+
+fn_declaracion: fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion{
+    
+    aux = UsoExclusivoLocal($1.lexema);
+
+    aux->adicional1 = num_parametros_actual;
+
+    aux = UsoGlobal($1.lexema);
+
+    aux->adicional1 = num_parametros_actual;
+
+    sprintf($$.lexema,"%s",$1.lexema);
+
+    declararFuncion(yyout,$1.lexema,num_parametros_actual);
+
+};
+
+funcion: fn_declaracion sentencias TOK_LLAVEDERECHA {
+
+    CerrarFuncion();
+    tablaSimbolosLocal=NULL;
+    retornarFuncion(yyout,$1.direcciones);
+    aux = UsoGlobal($1.lexema);
+    if(aux == NULL){
+        printf("****Error Semantico en la linea %d: Acceso a la variable %s sin declarar\n", line, $1.lexema);
+        return -1;
+    }
+
+    /*if(){
+        printf("****Error Semantico en la linea %d: No existe retorno para la funcion %s\n", line, $1.lexema);
+        return -1;
+    }*/
+
+    /*Retorno = 0*/
+
+fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
+
+};
+
 
 parametros_funcion: parametro_funcion resto_parametros_funcion {fprintf(stdout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
                 | /* LAMBDA */ {fprintf(stdout, ";;R24:\t<parametros_funcion> ::=\n");}
@@ -195,7 +264,7 @@ resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_func
                         | /* LAMBDA */ {fprintf(stdout, ";R26:\t<resto_parametros_funcion> ::=\n");}
 ;
 
-parametro_funcion: tipo identificador {fprintf(stdout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");}
+parametro_funcion: tipo idpf {fprintf(stdout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");}
 ;
 
 declaraciones_funcion: declaraciones {fprintf(stdout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");}
@@ -539,7 +608,7 @@ exp: exp TOK_MAS exp {
                 operandoEnPilaAArgumento(yyout,$1.direcciones);
             }
         }else{
-            //ERROR VARIANLE
+            //ERROR VARIABLE
         }
         
     }else{ //BUSQUEDA EN GLOBAL
@@ -566,13 +635,7 @@ exp: exp TOK_MAS exp {
                 operandoEnPilaAArgumento(yyout,$1.direcciones); //Valor
             }
 
-            /*if(aux->categoria == VARIABLE){
-                escribirVariableLocal(yyout,aux->adicional2);
-            }else if(aux->categoria == PARAMETRO){
-                escribirParametro(yyout,aux->adicional2,num_parametros_actual);
-            }*/
 
-            escribir_operando(yyout,$1.lexema,$1.direcciones?0:1);
         }else{
             printf("****Error Semantico en la linea %d: LLamada a variable sin definir\n", line);
             return -1;
@@ -674,13 +737,13 @@ if(tablaSimbolosLocal != NULL){ //EXISTE LA LOCAL
         aux = UsoExclusivoLocal($1.lexema);
         if(aux != NULL){ //YA EXISTE EL ELEMENTO
             //INDICARLO CON PRINT
-            printf("****Error Semantico en linea %d: variable duplicada\n", line);
+            fprintf(stdout,"****Error Semantico en linea %d: variable duplicada\n", line);
             return -1;
         }else{
             //INSERTARLO EN LA TABLA LOCAL MIRANDO QUE SU CLASE SEA ESCALAR
             if(clase_actual != ESCALAR){
                 //ERROR DE DECLARACION, INDICAMOS
-                printf("****Error Semantico en la linea %d: Variable local de tipo incorrecto\n",line);
+                fprintf(stdout,"****Error Semantico en la linea %d: Variable local de tipo incorrecto\n",line);
                 return -1;
             }else{
                 //INSERTARLO EN LA TABLA LOCAL(Revisar parametros)
@@ -688,7 +751,8 @@ if(tablaSimbolosLocal != NULL){ //EXISTE LA LOCAL
                     pos_variable_local_actual++;
                     num_variables_locales_actual++;
                 }else{
-                    //ERROR INTERNO
+                    fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
+                    return -1;
                 }
             }
         }
@@ -696,18 +760,43 @@ if(tablaSimbolosLocal != NULL){ //EXISTE LA LOCAL
         aux = UsoExclusivoGlobal($1.lexema);
         if(aux != NULL){ //YA EXISTE EL ELEMENTO
             //INDICARLO CON PRINT
-            printf("****Error Semantico en la linea %d: variable duplicada\n", line);
+            fprintf(stdout,"****Error Semantico en la linea %d: variable duplicada\n", line);
             return -1;
         }else{
             //INSERTARLO EN LA TABLA GLOBAL(Revisar parametros)
             if(DeclararGlobal($1.lexema,VARIABLE,tipo_actual,clase_actual,tamanio_vector_actual,0) == OK){
                 tamanio_vector_actual=0;
             }else{
-                //ERROR INTERNO
+                fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
+                return -1;
             }
             
         }
     }
+};
+
+idpf: TOK_IDENTIFICADOR{
+    
+    if(tablaSimbolosLocal != NULL){
+        aux = UsoLocal($1.lexema);
+        if(aux != NULL){
+            printf("****Error Semantico en la linea %d: Acceso a la variable %s sin declarar\n", line, $1.lexema);
+            return -1;
+        }else{
+            if(DeclararGlobal($1.lexema,PARAMETRO,tipo_actual,clase_actual,tamanio_vector_actual,pos_parametro_actual) == OK){
+                pos_parametro_actual++;
+                num_parametros_actual++;
+                tamanio_vector_actual=0;   
+            }else{
+                fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
+            }
+        }
+    }else{
+        printf("****Ambito local no esta abierto\n");
+        printf("****Error Semantico en linea %d ,columna %d\n", line, col);
+        return -1;
+    }
+
 };
 
 %%
