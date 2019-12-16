@@ -1,0 +1,7 @@
+main {
+int x;
+int y;
+y = 9;
+x = y;
+   	printf x;
+}
