@@ -485,12 +485,13 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 }
 
 void asignarDestinoEnPila(FILE* fpasm, int es_variable){	
-	fprintf(fpasm,"\n\tpop dword ebx"); //direccion 
+	
 	fprintf(fpasm,"\n\tpop dword eax"); //Valor de la cima, que corresponde lo que vamos a asignar
 	if(es_variable == 1){
 		fprintf(fpasm,"\n\tmov dword eax, [eax]");
 	}
-	
+
+	fprintf(fpasm,"\n\tpop dword ebx"); //direccion 
 	fprintf(fpasm,"\n\tmov dword [ebx], eax");
 }
 

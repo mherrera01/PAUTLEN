@@ -49,7 +49,7 @@ STATUS DeclararLocal(char * identificador,CATEGORIA categoria, TIPO tipo, CLASE 
 }
 
 INFO_SIMBOLO * UsoGlobal(char * identificador){
-
+    
      /*Esta creada ==> retornar el elemento global*/
     if(tablaSimbolosGlobal != NULL){
         return buscar_simbolo(tablaSimbolosGlobal, identificador);
