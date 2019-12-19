@@ -7,22 +7,39 @@ main {
         boolean y1,y2;
         array int [10] z; //asi se definen los arrays
 
-        function int pepe(int x){
-                printf X;
-                return 12222;
+        function int pepe(int y){
+                int layo,munios;
+                scanf layo;
+                scanf munios;
+
+                if((layo == munios)){
+                        printf 10101010;
+                }
+
+                return 1;
+
+
         }
 
         scanf x1;
-        scanf x2;
 
-        z[9] = x1;
+        x1 = 1;
+        x2 = 0;
+        while((x1==1)){
+                z[x2] = x2;
+                x2 = x2 + 1;
+                if((x2 == 10)){
+                        x1 = 0;
+                }
+        }
 
-        printf z[9];
+        x2 = 0;
 
-
-        x3 = pepe(2);
-
-        printf x3;
+        while((x2 < 10)){
+                printf z[x2];
+                x2 = x2 + 1; 
+        }
         
+        printf pepe(100);
         
 }

@@ -364,6 +364,18 @@ void leer(FILE* fpasm, char* nombre, int tipo){
 	fprintf(fpasm,"\n\tadd esp, 4");
 }
 
+void leer_en_pila(FILE * fpasm, int tipo){
+
+	if(tipo == ENTERO){
+		fprintf(fpasm,"\n\tcall scan_int");
+	}else{
+		fprintf(fpasm,"\n\tcall scan_boolean");
+	}
+	
+	fprintf(fpasm,"\n\tadd esp, 4");
+
+}
+
 void escribir(FILE* fpasm, int es_variable, int tipo){
 	
 	if(es_variable == 1){

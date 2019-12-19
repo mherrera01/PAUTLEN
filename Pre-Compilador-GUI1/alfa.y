@@ -440,8 +440,6 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
 
     aux = UsoLocal($1.lexema);
 
-    printf("AUX >= %s %d   %s %d ", aux->lexema, aux->tipo, $3.lexema,$3.tipo);
-
     if(aux == NULL){ fprintf(stdout,"Error Semantico en la linea %d: No existe la variable a asignar\n",line);
     return -1;}
     if(aux->categoria == FUNCION){ fprintf(stdout,"Error Semantico en la linea %d: la variable es de categoria FUNCION\n",line);
@@ -502,7 +500,7 @@ elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
         return -1;
     }
 
-    if($3.valor_entero >= aux->adicional1){
+    if($3.valor_entero > aux->adicional1){
         fprintf(stdout,"****Error Semantico en la linea %d: se quiere usar una posicion del vector superior a la permitida\n",line);
         return -1;
     }
@@ -588,11 +586,13 @@ bucle_exp: TOK_WHILE {
 
 
 lectura: TOK_SCANF TOK_IDENTIFICADOR {
+
       if(tablaSimbolosLocal != NULL){ //HAY AMBITO LOCAL
 
         aux = UsoExclusivoLocal($2.lexema);
 
         if(aux != NULL){
+
             if(aux->categoria == FUNCION){
                 fprintf(stdout,"****Error Semantico en la linea %d: variable declarada como funcion\n", line);
                 return -1;
@@ -605,15 +605,28 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR {
 
             /*LEER SI ES UN PARAMETRO*/
             if(aux->categoria == PARAMETRO){
-                //escribirParametro(yyout,aux->adicional2,num_parametros_actual);
+
+                escribirParametro(yyout,aux->adicional2,num_parametros_actual);
+                if(aux->tipo == INT){
+                    leer_en_pila(yyout,0);
+                }else{
+                    leer_en_pila(yyout,1);
+                }
             }else{/*LEER SI ES UNA LOCAL*/
 
+                escribirVariableLocal(yyout,aux->adicional2);
+                if(aux->tipo == INT){
+                    leer_en_pila(yyout,0);
+                }else{
+                    leer_en_pila(yyout,1);
+                }
             }
 
             
 
         }else{
             
+
             aux = UsoGlobal($2.lexema);
 
             if(aux != NULL){
