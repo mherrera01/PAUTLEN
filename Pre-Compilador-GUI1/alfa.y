@@ -1055,8 +1055,13 @@ exp: exp TOK_MAS exp {
                 return -1;
             }
 
-            escribir_operando(yyout,$1.lexema,1); //Direccion
 
+            if(en_explist == 0){
+              escribir_operando(yyout,$1.lexema,1); //Direccion
+            }else{
+              escribir_operando(yyout,$1.lexema,1); //Direccion
+              operandoEnPilaAArgumento(yyout,1); //DUDAS
+            }
 
             $$.tipo = aux->tipo;
             $$.direcciones = 1;
@@ -1121,7 +1126,7 @@ exp: exp TOK_MAS exp {
 /*  PRODUCCION REGLA 88
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
-    | TOK_IDENTIFICADOR TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
+    | TOK_IDENTIFICADOR activar_en_explist TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
 
 
 
@@ -1149,6 +1154,11 @@ exp: exp TOK_MAS exp {
     fprintf(stdout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
 };
 
+activar_en_explist: {
+    en_explist = 1;
+}
+
+
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 89
 */
@@ -1156,8 +1166,6 @@ exp: exp TOK_MAS exp {
 lista_expresiones: exp resto_lista_expresiones {
 
     comprobacion_parametros = comprobacion_parametros + 1;
-    operandoEnPilaAArgumento(yyout,$1.direcciones);
-
     fprintf(stdout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/

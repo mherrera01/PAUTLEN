@@ -19,28 +19,29 @@ segment .text
 pepe:
 	push dword ebp
 	mov dword ebp, esp
-	sub esp, 12
-	lea eax, [ebp - 4]
+	sub esp, 4
+	lea eax, [ebp + 16]
 	push dword eax
-	call scan_int
-	add esp, 4
-	lea eax, [ebp - 8]
-	push dword eax
-	call scan_int
-	add esp, 4
 	lea eax, [ebp + 12]
 	push dword eax
-	lea eax, [ebp - 12]
-	push dword eax
-	pop dword eax
 	pop dword ebx
-	push dword eax
-	push dword ebx
 	pop dword eax
 	mov dword eax, [eax]
+	mov dword ebx, [ebx]
+	imul ebx
+	push dword eax
+	lea eax, [ebp + 8]
+	push dword eax
 	pop dword ebx
-	mov dword [ebx], eax
-	lea eax, [ebp - 12]
+	pop dword eax
+	mov dword ebx, [ebx]
+	mov dword edx, 0
+	cmp ebx, edx
+	je near fin_error_division
+	idiv ebx
+	push dword eax
+	pop dword eax
+	neg eax
 	push dword eax
 	lea eax, [ebp - 4]
 	push dword eax
@@ -49,44 +50,18 @@ pepe:
 	push dword eax
 	push dword ebx
 	pop dword eax
-	mov dword eax, [eax]
 	pop dword ebx
 	mov dword [ebx], eax
-	lea eax, [ebp - 12]
+	push dword 12
+	lea eax, [ebp + 16]
 	push dword eax
 	pop dword eax
-	mov dword eax, [eax]
+	pop dword ebx
 	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	lea eax, [ebp - 4]
-	push dword eax
-	lea eax, [ebp - 8]
-	push dword eax
-	pop dword ecx
+	push dword ebx
 	pop dword eax
-	mov dword eax, [eax]
-	mov dword ecx, [ecx]
-	cmp eax,ecx
-	jz near true_igual_0
-	mov dword eax, 0
-	push dword eax
-	jmp near continua_igual_0
-true_igual_0:
-	mov dword eax,1
-	push dword eax
-continua_igual_0:
-	pop dword eax
-	cmp eax, 0
-	je near _fin_condicional_simple_1
-	push dword 10101010
-	call print_int
-	add esp, 4
-	call print_endofline
-	jmp near _fin_condicional_compuesto_1
-_fin_condicional_simple_1:
-_fin_condicional_compuesto_1:
+	pop dword ebx
+	mov dword [ebx], eax
 	lea eax, [ebp - 4]
 	push dword eax
 	pop dword eax
@@ -96,27 +71,16 @@ _fin_condicional_compuesto_1:
 	ret
 main:
 	mov dword [__esp], esp
-	push dword 10
-	push dword 90
-	call pepe
-	add esp, 8
+	push dword _x1
+	pop dword eax
+	mov dword eax, [eax]
 	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	jmp near fin
-fin_error_division:
-	push dword err_div0
-	call print_string
-	add esp, 4
-	call print_endofline
-	jmp near fin
-fin_indice_fuera_rango:
-	push dword err_indice_vector
-	call print_string
-	add esp, 4
-	call print_endofline
-	jmp near fin
-fin:
-	mov esp, [__esp]
-	ret
+	push dword 10
+	push dword _x2
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
+	push dword _x3
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
