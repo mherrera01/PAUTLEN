@@ -55,8 +55,10 @@ continua_igual_0:
 	jmp near _fin_condicional_compuesto_1
 _fin_condicional_simple_1:
 _fin_condicional_compuesto_1:
-	push dword 1
+	lea eax, [ebp - 4]
+	push dword eax
 	pop dword eax
+	mov dword eax, [eax]
 	mov dword esp, ebp
 	pop dword ebp
 	ret

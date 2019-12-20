@@ -2,11 +2,8 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    
+
     #include "alfa.h"
-    #include "tablaSimbolos.h"
-    #include "tablaHash.h"
-    #include "generacion.h"
 
     void yyerror(const char* err);
     extern int line, col, error;
@@ -16,29 +13,26 @@
     extern int yyleng;
 
     /*variables para conocer el estado actual del simbolo*/
-
     TIPO tipo_actual;
     CLASE clase_actual;
     INFO_SIMBOLO * aux;
+    int tamanio_vector_actual=0; //Tamanio del vector
+    int pos_variable_local_actual=1; //Posicion de variable global en ambitos de variables locales
+
 
     /*Ambito global y local*/
-
     extern TABLA_HASH * tablaSimbolosLocal;
     extern TABLA_HASH * tablaSimbolosGlobal;
 
     /*Otra informacion*/
-
-    int tamanio_vector_actual=0; //Tamanio del vector
-    int pos_variable_local_actual=1; //Posicion de variable global en ambitos de variables locales
     int num_variables_locales_actual=0;
     int cuantos_no=0;
     char aux_char[100];
     int en_explist=1;
     int etiqueta=1;
     int fn_return=0;
-    
+
     /*Parametros*/
-    
     int num_parametros_actual=0;
     int pos_parametro_actual=0;
     int num_parametros_llamada_actual=0;
@@ -46,6 +40,7 @@
 
     /*Etiquetas*/
     int num_comparaciones=0;
+
 %}
 %union
         {
@@ -69,7 +64,6 @@
 %type <atributos> if_exp_sentencias
 %type <atributos> bucle_exp
 %type <atributos> bucle_exp_sentencias
-
 
 /*Simbolos terminales con valor semantico*/
 
@@ -187,10 +181,9 @@ declaracion: clase identificadores TOK_PUNTOYCOMA {
 
 };
 
-
 clase: clase_escalar {
-    
-    clase_actual=ESCALAR; 
+
+    clase_actual=ESCALAR;
     fprintf(stdout, ";R5:\t<clase> ::= <clase_escalar>\n");
 
 }
@@ -223,13 +216,13 @@ clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETE
 
 tipo: TOK_INT {
 
-    tipo_actual=INT; 
+    tipo_actual=INT;
     fprintf(stdout, ";R10:\t<tipo> ::= int\n");
 
 }
     | TOK_BOOLEAN {
 
-    tipo_actual=BOOLEAN; 
+    tipo_actual=BOOLEAN;
     fprintf(stdout, ";R11:\t<tipo> ::= boolean\n");
 
 };
@@ -263,7 +256,7 @@ funciones: funcion funciones {
 };
 
 fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR {
-    
+
     aux = UsoGlobal($3.lexema);
 
     if(aux != NULL){ //Error porque el identificador ya existe en este ambito
@@ -292,7 +285,7 @@ fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR {
 
 
 fn_declaracion: fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion{
-    
+
     aux = UsoExclusivoLocal($1.lexema);
 
     aux->adicional1 = num_parametros_actual;
@@ -328,7 +321,7 @@ funcion: fn_declaracion sentencias TOK_LLAVEDERECHA {
         return -1;
     }
 
-   
+
 
 fprintf(stdout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
 
@@ -452,7 +445,7 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
     /*quiere decir que es global*/
     if(UsoExclusivoLocal($1.lexema) == NULL){
         asignar(yyout,$1.lexema,$3.direcciones);
-    
+
 
     /*quiere decir que es parametro*/ /*FALTA PROBAR*/
     }else if(aux->categoria == PARAMETRO){
@@ -473,7 +466,7 @@ fprintf(stdout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
         | elemento_vector TOK_ASIGNACION exp {
 
         aux = UsoLocal($1.lexema);
-        if(aux == NULL){ 
+        if(aux == NULL){
             fprintf(stdout,"Error Semantico en la linea %d: no existe la variable a asignar\n",line);
             return -1;}
         if(aux->tipo != $3.tipo){
@@ -544,7 +537,7 @@ if_exp_sentencias: if_exp sentencias {
 
 
 if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA {
-    
+
     if($3.tipo != BOOLEAN){
         fprintf(stdout,"****Error Semantico en la linea %d: la comparacion no es de tipo booleano\n",line);
         return -1;
@@ -558,13 +551,13 @@ if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIE
 bucle:  bucle_exp_sentencias  sentencias TOK_LLAVEDERECHA {
 
     while_fin(yyout,$1.etiqueta);
-    
+
     fprintf(stdout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");
 
 };
 
 bucle_exp_sentencias: bucle_exp TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA {
-    
+
     if($3.tipo != BOOLEAN){
         fprintf(stdout,"****Error Semantico en la linea %d: la comparacion no es de tipo booleano\n",line);
         return -1;
@@ -577,7 +570,7 @@ bucle_exp_sentencias: bucle_exp TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECH
 }
 
 bucle_exp: TOK_WHILE {
-    
+
     $$.etiqueta = etiqueta++;
     while_inicio(yyout,$$.etiqueta);
 
@@ -622,10 +615,10 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR {
                 }
             }
 
-            
+
 
         }else{
-            
+
 
             aux = UsoGlobal($2.lexema);
 
@@ -689,7 +682,7 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR {
 escritura: TOK_PRINTF exp {
 
     if($2.tipo == INT){
-        escribir(yyout,$2.direcciones,0);    
+        escribir(yyout,$2.direcciones,0);
     }else{
         escribir(yyout,$2.direcciones,1);
     }
@@ -707,7 +700,7 @@ retorno_funcion: TOK_RETURN exp {
 };
 
 exp: exp TOK_MAS exp {
-    
+
     if($1.tipo == INT && $3.tipo == INT){
 
         $$.tipo = INT;
@@ -867,11 +860,11 @@ exp: exp TOK_MAS exp {
             $$.direcciones = 1;
 
         }else{
-            
+
             aux =  UsoGlobal($1.lexema);
-            
+
             if(aux != NULL){
-                
+
                 if(aux->categoria == FUNCION){
                     fprintf(stdout,"****Error Semantico en la linea %d: variable no es de la categoria correspondiente\n", line);
                     return -1;
@@ -885,7 +878,7 @@ exp: exp TOK_MAS exp {
                 escribir_operando(yyout,$1.lexema,1); //Direccion
 
                 $$.tipo = aux->tipo;
-                $$.direcciones = 1;              
+                $$.direcciones = 1;
 
 
             }else{
@@ -893,7 +886,7 @@ exp: exp TOK_MAS exp {
                 return -1;
             }
         }
-        
+
     }else{ //BUSQUEDA EN GLOBAL
 
         aux =  UsoGlobal($1.lexema);
@@ -912,7 +905,7 @@ exp: exp TOK_MAS exp {
 
 
             $$.tipo = aux->tipo;
-            $$.direcciones = 1;          
+            $$.direcciones = 1;
 
         }else{
             fprintf(stdout,"****Error Semantico en la linea %d: llamada a variable sin definir\n", line);
@@ -992,7 +985,7 @@ exp: exp TOK_MAS exp {
 
 lista_expresiones: exp resto_lista_expresiones {
 
-    comprobacion_parametros = comprobacion_parametros + 1;    
+    comprobacion_parametros = comprobacion_parametros + 1;
     operandoEnPilaAArgumento(yyout,$1.direcciones);
 
     fprintf(stdout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
@@ -1141,26 +1134,26 @@ constante_logica{
 
 constante_logica: TOK_TRUE {
 
-    $$.tipo=BOOLEAN; 
-    $$.direcciones=0; 
-    $$.valor_entero=1; 
+    $$.tipo=BOOLEAN;
+    $$.direcciones=0;
+    $$.valor_entero=1;
     fprintf(stdout, ";R102:\t<constante_logica> ::= true\n");
 
 }
                 | TOK_FALSE {
 
-    $$.tipo=BOOLEAN; 
-    $$.direcciones=0; 
-    $$.valor_entero=0; 
+    $$.tipo=BOOLEAN;
+    $$.direcciones=0;
+    $$.valor_entero=0;
     fprintf(stdout, ";R103:\t<constante_logica> ::= false\n");
 
 };
 
 constante_entera: TOK_CONSTANTE_ENTERA {
-   
-    $$.tipo=INT; 
-    $$.direcciones=0; 
-    $$.valor_entero=$1.valor_entero; 
+
+    $$.tipo=INT;
+    $$.direcciones=0;
+    $$.valor_entero=$1.valor_entero;
     fprintf(stdout, ";R104:\t<constante_entera> ::= <numero>\n");
 
 };
@@ -1204,7 +1197,7 @@ identificador: TOK_IDENTIFICADOR {
                 fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
                 return -1;
             }
-            
+
         }
     }
 

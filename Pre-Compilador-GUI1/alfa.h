@@ -7,6 +7,7 @@
 
 #include "tablaSimbolos.h"
 #include "tablaHash.h"
+#include "generacion.h"
 
 #define MAX_LONG_ID 100
 #define MAX_TAMANIO_VECTOR 64
@@ -16,7 +17,7 @@ typedef struct{
 	int valor_entero; /*valor de constante entera*/
 	TIPO tipo; /*tipo entero o booleano de variable*/
 	int direcciones; /*direccion si es que tiene que guardar una direccion*/
-    int etiqueta; /*atributo para los casos de sentencias condicionales e iterativas*/
+  int etiqueta; /*atributo para los casos de sentencias condicionales e iterativas*/
 }tipo_atributos;
 
 
