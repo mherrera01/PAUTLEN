@@ -531,11 +531,11 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
 
     aux = UsoLocal($1.lexema);
 
-    if(aux == NULL){ fprintf(stdout,"Error Semantico en la linea %d: No existe la variable a asignar\n",line);
+    if(aux == NULL){ fprintf(stdout,"Error Semantico en la linea %d: No existe la variable %s\n",line,$1.lexema);
     return -1;}
-    if(aux->categoria == FUNCION){ fprintf(stdout,"Error Semantico en la linea %d: la variable es de categoria FUNCION\n",line);
+    if(aux->categoria == FUNCION){ fprintf(stdout,"Error Semantico en la linea %d: la variable %s es de categoria FUNCION\n",line,$1.lexema);
     return -1;}
-    if(aux->clase == VECTOR){ fprintf(stdout,"Error Semantico en la linea %d: la variable es de clase VECTOR\n",line);
+    if(aux->clase == VECTOR){ fprintf(stdout,"Error Semantico en la linea %d: la variable %s es de clase VECTOR\n",line, $1.lexema);
     return -1;}
     if(aux->tipo != $3.tipo){ fprintf(stdout,"Error Semantico en la linea %d: la asignacion es de tipos distintos\n",line);
     return -1;}
@@ -545,16 +545,16 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
         asignar(yyout,$1.lexema,$3.direcciones);
 
 
-    /*quiere decir que es parametro*/ /*FALTA PROBAR*/
+    /*quiere decir que es parametro*/
     }else if(aux->categoria == PARAMETRO){
-        escribir_operando(yyout,$3.lexema,$3.direcciones);
         escribirParametro(yyout,aux->adicional2,num_parametros_actual);
+        invertirEnPila(yyout);
         asignarDestinoEnPila(yyout,$3.direcciones);
 
-    /*quiere decir que es local*/ /*FALTA PROBAR*/
+    /*quiere decir que es local*/
     }else{
-        escribir_operando(yyout,$3.lexema,$3.direcciones);
         escribirVariableLocal(yyout,aux->adicional2);
+        invertirEnPila(yyout);
         asignarDestinoEnPila(yyout,$3.direcciones);
     }
 
@@ -1378,22 +1378,21 @@ identificador: TOK_IDENTIFICADOR {
     if(tablaSimbolosLocal != NULL){ //EXISTE LA LOCAL
         aux = UsoExclusivoLocal($1.lexema);
         if(aux != NULL){ //YA EXISTE EL ELEMENTO
-            //INDICARLO CON PRINT
-            fprintf(stdout,"****Error Semantico en linea %d: variable duplicada\n", line);
+            fprintf(stdout,"****Error Semantico en linea %d: variable local %s ya declarada\n", line, $1.lexema);
             return -1;
         }else{
-            //INSERTARLO EN LA TABLA LOCAL MIRANDO QUE SU CLASE SEA ESCALAR
+            //INSERTARLO EN LA TABLA LOCAL MIRANDO QUE SU CLASE SEA ESCALAR, NO PUEDE SER UN VECTOR
             if(clase_actual != ESCALAR){
                 //ERROR DE DECLARACION, INDICAMOS
-                fprintf(stdout,"****Error Semantico en la linea %d: variable local de tipo incorrecto\n",line);
+                fprintf(stdout,"****Error Semantico en la linea %d: variable local %s de clase VECTOR\n",line, $1.lexema);
                 return -1;
             }else{
-                //INSERTARLO EN LA TABLA LOCAL(Revisar parametros)
+                //INSERTARLO EN LA TABLA LOCAL
                 if(DeclararLocal($1.lexema,VARIABLE,tipo_actual,clase_actual,0,pos_variable_local_actual) == OK){
                     pos_variable_local_actual++;
                     num_variables_locales_actual++;
                 }else{
-                    fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
+                    fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable local %s",line, $1.lexema);
                     return -1;
                 }
             }
@@ -1401,15 +1400,14 @@ identificador: TOK_IDENTIFICADOR {
     }else{
         aux = UsoExclusivoGlobal($1.lexema);
         if(aux != NULL){ //YA EXISTE EL ELEMENTO
-            //INDICARLO CON PRINT
-            fprintf(stdout,"****Error Semantico en la linea %d: variable duplicada\n", line);
+            fprintf(stdout,"****Error Semantico en la linea %d: variable global %s ya declarada\n", line, $1.lexema);
             return -1;
         }else{
             //INSERTARLO EN LA TABLA GLOBAL(Revisar parametros)
             if(DeclararGlobal($1.lexema,VARIABLE,tipo_actual,clase_actual,tamanio_vector_actual,0) == OK){
                 tamanio_vector_actual=0;
             }else{
-                fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable %s",line,$1.lexema);
+                fprintf(stdout,"****Error Semantico en la linea %d: fallo al crear la variable global %s",line, $1.lexema);
                 return -1;
             }
 

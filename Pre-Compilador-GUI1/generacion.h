@@ -39,7 +39,7 @@ void escribir_segmento_codigo(FILE* fpasm);
 */
 
 void escribir_inicio_main(FILE* fpasm);
-/* 
+/*
    En este punto se debe escribir, al menos, la etiqueta main y la sentencia que guarda el puntero de pila en su variable (se recomienda usar __esp).
 */
 
@@ -61,7 +61,7 @@ es_variable indica si este operando es una variable (como por ejemplo b1) con un
 
 void asignar(FILE* fpasm, char* nombre, int es_variable);
 /*
-Genera el código para asignar valor a la variable de nombre nombre. 
+Genera el código para asignar valor a la variable de nombre nombre.
 Se toma el valor de la cima de la pila.
 El último argumento es el que indica si lo que hay en la cima de la pila es una referencia (1) o ya un valor explícito (0).
 */
@@ -85,7 +85,7 @@ void y(FILE* fpasm, int es_variable_1, int es_variable_2);
 
 void cambiar_signo(FILE* fpasm, int es_variable);
 /*
-   Función aritmética de cambio de signo. 
+   Función aritmética de cambio de signo.
    Es análoga a las binarias, excepto que sólo requiere de un acceso a la pila ya que sólo usa un operando.
 */
 
@@ -96,7 +96,7 @@ void no(FILE* fpasm, int es_variable, int cuantos_no);
 */
 
 /* FUNCIONES COMPARATIVAS */
-/* 
+/*
    Todas estas funciones reciben como argumento si los elementos a comparar son o no variables. El resultado de las operaciones, que siempre será un booleano (“1” si se cumple la comparación y “0” si no se cumple), se deja en la pila como en el resto de operaciones. Se deben usar etiquetas para poder gestionar los saltos necesarios para implementar las comparaciones.
 */
 void igual(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
@@ -145,6 +145,8 @@ void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros)
 void escribirVariableLocal(FILE* fpasm, int posicion_variable_local);
 
 void asignarDestinoEnPila(FILE* fpasm, int es_variable);
+
+void invertirEnPila(FILE * fpasm);
 
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable);
 
