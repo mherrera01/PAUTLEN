@@ -28,9 +28,8 @@
     int num_variables_locales_actual=0;
     int cuantos_no=0;
     char aux_char[100];
-    int en_explist=1;
+    int en_explist=0;
     int etiqueta=1;
-    int fn_return=0;
 
     /*Parametros*/
     int num_parametros_actual=0;
@@ -40,6 +39,10 @@
 
     /*Etiquetas*/
     int num_comparaciones=0;
+
+    /*Funciones*/
+    int fn_return=0;
+    int tipo_retorno=0;
 
 %}
 %union
@@ -212,18 +215,16 @@ declaracion: clase identificadores TOK_PUNTOYCOMA {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 clase: clase_escalar {
-
-    clase_actual=ESCALAR;
     fprintf(stdout, ";R5:\t<clase> ::= <clase_escalar>\n");
+    clase_actual=ESCALAR;
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 7
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
     | clase_vector {
-
-    clase_actual=VECTOR;
     fprintf(stdout, ";R7:\t<clase> ::= <clase_vector>\n");
+    clase_actual=VECTOR;
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -231,7 +232,6 @@ clase: clase_escalar {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 clase_escalar: tipo {
-
     fprintf(stdout, ";R9:\t<clase_escalar> ::= <tipo>\n");
 };
 
@@ -240,18 +240,16 @@ clase_escalar: tipo {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 tipo: TOK_INT {
-
-    tipo_actual=INT;
     fprintf(stdout, ";R10:\t<tipo> ::= int\n");
+    tipo_actual=INT;
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 11
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
     | TOK_BOOLEAN {
-
-    tipo_actual=BOOLEAN;
     fprintf(stdout, ";R11:\t<tipo> ::= boolean\n");
+    tipo_actual=BOOLEAN;
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -259,14 +257,12 @@ tipo: TOK_INT {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO {
-
+    fprintf(stdout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");
     tamanio_vector_actual = $4.valor_entero;
     if((tamanio_vector_actual < 1) || (tamanio_vector_actual > MAX_TAMANIO_VECTOR)){
         fprintf(stdout,"****Error Semantico en la linea %d columna %d: tamanio array inferior o superior al permitido en la declaracion\n", line,col);
         return -1;
     }
-
-    fprintf(stdout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -274,7 +270,6 @@ clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETE
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 identificadores: identificador {
-
     fprintf(stdout, ";R18:\t<identificadores> ::= <identificador>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -282,7 +277,6 @@ identificadores: identificador {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | identificador TOK_COMA identificadores {
-
     fprintf(stdout, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");
 };
 
@@ -291,7 +285,6 @@ identificadores: identificador {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 funciones: funcion funciones {
-
     fprintf(stdout, ";R20:\t<funciones> ::= <funcion> <funciones>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -299,7 +292,6 @@ funciones: funcion funciones {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | /* LAMBDA */ {
-
     fprintf(stdout, ";R21:\t<funciones> ::=\n");
 };
 
@@ -312,7 +304,7 @@ fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR {
     aux = UsoGlobal($3.lexema);
 
     if(aux != NULL){ //Error porque el identificador ya existe en este ambito
-        fprintf(stdout,"****Error Semantico en la linea %d: declaracion doble de la funcion\n", line);
+        fprintf(stdout,"****Error Semantico en la linea %d: declaracion doble de la funcion %s\n", line, $3.lexema);
         return -1;
     }else{
 
@@ -326,7 +318,7 @@ fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR {
             strcpy($$.lexema,$3.lexema);
             fn_return = 0;
         }else{
-            fprintf(stdout,"****Error Semantico en la linea %d: fallo al declarar la funcion %s en el ambito global\n",line,$3.lexema);
+            fprintf(stdout,"****Error Semantico en la linea %d: fallo al declarar la funcion %s en los ambitos\n",line,$3.lexema);
             return -1;
         }
 
@@ -359,6 +351,7 @@ fn_declaracion: fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESI
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 funcion: fn_declaracion sentencias TOK_LLAVEDERECHA {
+    fprintf(stdout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
 
     CerrarFuncion();
     tablaSimbolosLocal=NULL;
@@ -375,7 +368,11 @@ funcion: fn_declaracion sentencias TOK_LLAVEDERECHA {
         return -1;
     }
 
-    fprintf(stdout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
+    if(tipo_retorno != aux->tipo){
+      fprintf(stdout,"****Error Semantico en la linea %d: el retorno de la funcion %s no es del tipo correcto\n", line, $1.lexema);
+      return -1;
+    }
+
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -383,7 +380,6 @@ funcion: fn_declaracion sentencias TOK_LLAVEDERECHA {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 parametros_funcion: parametro_funcion resto_parametros_funcion {
-
     fprintf(stdout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -391,7 +387,6 @@ parametros_funcion: parametro_funcion resto_parametros_funcion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | /* LAMBDA */ {
-
     fprintf(stdout, ";;R24:\t<parametros_funcion> ::=\n");
 };
 
@@ -401,7 +396,6 @@ parametros_funcion: parametro_funcion resto_parametros_funcion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion {
-
     fprintf(stdout, ";R25:\t <resto_parametros_funcion> ::= ; <parametro_funcion> <resto_parametros_funcion>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -409,7 +403,6 @@ resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_func
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | /* LAMBDA */ {
-
     fprintf(stdout, ";R26:\t<resto_parametros_funcion> ::=\n");
 };
 
@@ -418,7 +411,6 @@ resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_func
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 parametro_funcion: tipo idpf {
-
     fprintf(stdout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");
 };
 
@@ -427,7 +419,6 @@ parametro_funcion: tipo idpf {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 declaraciones_funcion: declaraciones {
-
     fprintf(stdout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -435,7 +426,6 @@ declaraciones_funcion: declaraciones {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | /* LAMBDA */ {
-
     fprintf(stdout, ";R29:\t<declaraciones_funcion> ::=\n");
 };
 
@@ -444,7 +434,6 @@ declaraciones_funcion: declaraciones {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 sentencias: sentencia {
-
     fprintf(stdout, ";R30:\t<sentencias> ::= <sentencia>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -452,7 +441,6 @@ sentencias: sentencia {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | sentencia sentencias {
-
     fprintf(stdout, ";R31:\t<sentencias> ::= <sentencia> <sentencias>\n");
 };
 
@@ -461,7 +449,6 @@ sentencias: sentencia {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 sentencia: sentencia_simple TOK_PUNTOYCOMA {
-
     fprintf(stdout, ";R32:\t<sentencia> ::= <sentencia_simple> ;\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -469,7 +456,6 @@ sentencia: sentencia_simple TOK_PUNTOYCOMA {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | bloque {
-
     fprintf(stdout, ";R33:\t<sentencia> ::= <bloque>\n");
 };
 
@@ -478,7 +464,6 @@ sentencia: sentencia_simple TOK_PUNTOYCOMA {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 sentencia_simple: asignacion {
-
     fprintf(stdout, ";R34:\t<sentencia_simple> ::= <asignacion>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -486,7 +471,6 @@ sentencia_simple: asignacion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | lectura {
-
     fprintf(stdout, ";R35:\t<sentencia_simple> ::= <lectura>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -494,7 +478,6 @@ sentencia_simple: asignacion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | escritura {
-
     fprintf(stdout, ";R36:\t<sentencia_simple> ::= <escritura>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -502,7 +485,6 @@ sentencia_simple: asignacion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | retorno_funcion {
-
     fprintf(stdout, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");
 };
 
@@ -511,7 +493,6 @@ sentencia_simple: asignacion {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 bloque: condicional {
-
     fprintf(stdout, ";R40:\t<bloque> ::= <condicional>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -519,7 +500,6 @@ bloque: condicional {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | bucle {
-
     fprintf(stdout, ";R41:\t<bloque> ::= <bucle>\n");
 };
 
@@ -528,7 +508,7 @@ bloque: condicional {
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
-
+    fprintf(stdout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
     aux = UsoLocal($1.lexema);
 
     if(aux == NULL){ fprintf(stdout,"Error Semantico en la linea %d: No existe la variable %s\n",line,$1.lexema);
@@ -544,7 +524,6 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
     if(UsoExclusivoLocal($1.lexema) == NULL){
         asignar(yyout,$1.lexema,$3.direcciones);
 
-
     /*quiere decir que es parametro*/
     }else if(aux->categoria == PARAMETRO){
         escribirParametro(yyout,aux->adicional2,num_parametros_actual);
@@ -558,17 +537,16 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
         asignarDestinoEnPila(yyout,$3.direcciones);
     }
 
-    fprintf(stdout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 44
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | elemento_vector TOK_ASIGNACION exp {
-
+        fprintf(stdout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
         aux = UsoLocal($1.lexema);
         if(aux == NULL){
-            fprintf(stdout,"Error Semantico en la linea %d: no existe la variable a asignar\n",line);
+            fprintf(stdout,"Error Semantico en la linea %d: no existe el vector %s\n",line, $1.lexema);
             return -1;}
         if(aux->tipo != $3.tipo){
             fprintf(stdout,"Error Semantico en la linea %d: la asignacion es de tipos distintos\n",line);
@@ -576,7 +554,6 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
         }
 
         asignarDestinoEnPila(yyout,$3.direcciones); /*o es una constante o es una variable*/
-        fprintf(stdout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -585,6 +562,7 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp {
 /*-------------------------------------------------------------------------------------------------------------------------*/
 elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
 
+    fprintf(stdout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
     aux = UsoGlobal($1.lexema);
 
     if(aux == NULL){
@@ -607,11 +585,15 @@ elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
         return -1;
     }
 
-    escribir_elemento_vector(yyout,$1.lexema,MAX_TAMANIO_VECTOR,$3.direcciones);
+    if (en_explist == 0) {
+      escribir_elemento_vector(yyout,$1.lexema,MAX_TAMANIO_VECTOR,$3.direcciones);
+    }else{
+      escribir_elemento_vector(yyout,$1.lexema,MAX_TAMANIO_VECTOR,$3.direcciones);
+      operandoEnPilaAArgumento(yyout,1);
+    }
+
     $$.tipo = aux->tipo;
     $$.direcciones = 1;
-
-    fprintf(stdout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -619,20 +601,16 @@ elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 condicional: if_exp_sentencias TOK_LLAVEDERECHA {
-
-    ifthenelse_fin(yyout, $1.etiqueta);
-
     fprintf(stdout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
+    ifthenelse_fin(yyout, $1.etiqueta);
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 51
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
         | if_exp_sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
-
-    ifthenelse_fin(yyout, $1.etiqueta);
-
     fprintf(stdout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
+    ifthenelse_fin(yyout, $1.etiqueta);
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
@@ -692,7 +670,6 @@ bucle_exp_sentencias: bucle_exp TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECH
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
 bucle_exp: TOK_WHILE {
-
     $$.etiqueta = etiqueta++;
     while_inicio(yyout,$$.etiqueta);
 };
@@ -818,6 +795,7 @@ escritura: TOK_PRINTF exp {
 retorno_funcion: TOK_RETURN exp {
 
     retornarFuncion(yyout,$2.direcciones);
+    tipo_retorno = $2.tipo;
     fn_return++;
 
     fprintf(stdout, ";R61:\t<retorno_funcion> ::= return <exp>\n");
@@ -1015,6 +993,7 @@ exp: exp TOK_MAS exp {
 
         }else{
 
+
             aux =  UsoGlobal($1.lexema);
 
             if(aux != NULL){
@@ -1117,6 +1096,9 @@ exp: exp TOK_MAS exp {
 /*-------------------------------------------------------------------------------------------------------------------------*/
     | elemento_vector {
 
+      printf("PARA VECTOR");
+
+
     $$.tipo = $1.tipo;
     $$.direcciones = $1.direcciones;
 
@@ -1147,7 +1129,7 @@ exp: exp TOK_MAS exp {
     }
 
     llamarFuncion(yyout, aux->lexema, aux->adicional1);
-    en_explist=0;
+    en_explist = 0;
     $$.tipo = aux->tipo;
     $$.direcciones = 0;
 

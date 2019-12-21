@@ -1,4 +1,4 @@
-all: PruebaSemantico GenerarAsm 
+all: PruebaSemantico GenerarAsm CompilarAsm CompilarEjecutable
 
 lex.yy.c: alfa.l y.tab.h
 	flex alfa.l
@@ -18,7 +18,7 @@ CompilarAsm:
 	nasm -felf32 prg1.asm
 
 CompilarEjecutable:
-	gcc -m32 -o prg1 prg1.o alfalib.o 
+	gcc -m32 -o prg1 prg1.o alfalib.o
 
 clean:
 	rm -rf *.h.gch y.tab.c y.tab.h y.output lex.yy.c alfa prg1
