@@ -67,6 +67,7 @@
 %type <atributos> if_exp_sentencias
 %type <atributos> bucle_exp
 %type <atributos> bucle_exp_sentencias
+%type <atributos> if_exp_else_sentencias
 
 /*Simbolos terminales con valor semantico*/
 
@@ -576,7 +577,7 @@ elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
         return -1;
     }
 
-    if($3.valor_entero > aux->adicional1){
+    if($3.valor_entero >= aux->adicional1){
         fprintf(stdout,"****Error Semantico en la linea %d: Posicion incorrecta para la indexacion del vector.\n",line);
         return -1;
     }
@@ -601,15 +602,15 @@ elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
 /*  PRODUCCION REGLA 50
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
-condicional: if_exp_sentencias TOK_LLAVEDERECHA {
+condicional: if_exp_sentencias {
     fprintf(stdout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
-    ifthenelse_fin(yyout, $1.etiqueta);
+    ifthen_fin(yyout, $1.etiqueta);
 }
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 51
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
-        | if_exp_sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+        | if_exp_else_sentencias TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
     fprintf(stdout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
     ifthenelse_fin(yyout, $1.etiqueta);
 };
@@ -618,8 +619,15 @@ condicional: if_exp_sentencias TOK_LLAVEDERECHA {
 /*  REGLA AÑADIDA - IF_EXP_SENTENCIAS
 */
 /*-------------------------------------------------------------------------------------------------------------------------*/
-if_exp_sentencias: if_exp sentencias {
+if_exp_sentencias: if_exp sentencias TOK_LLAVEDERECHA {
+    $$.etiqueta = $1.etiqueta;
+};
 
+/*-------------------------------------------------------------------------------------------------------------------------*/
+/*  REGLA AÑADIDA - IF_EXP
+*/
+/*-------------------------------------------------------------------------------------------------------------------------*/
+if_exp_else_sentencias: if_exp sentencias TOK_LLAVEDERECHA TOK_ELSE{
     $$.etiqueta = $1.etiqueta;
     ifthenelse_fin_then(yyout, $$.etiqueta);
 };
@@ -638,6 +646,7 @@ if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIE
     $$.etiqueta = etiqueta++;
     ifthen_inicio(yyout, $3.direcciones, $$.etiqueta);
 };
+
 
 /*-------------------------------------------------------------------------------------------------------------------------*/
 /*  PRODUCCION REGLA 52
@@ -1001,7 +1010,12 @@ exp: exp TOK_MAS exp {
                     return -1;
                 }
 
-                escribir_operando(yyout,$1.lexema,1); //Direccion
+                if(en_explist == 0){
+                  escribir_operando(yyout,$1.lexema,1); //Direccion
+                }else{
+                  escribir_operando(yyout,$1.lexema,1); //Direccion
+                  operandoEnPilaAArgumento(yyout,1); //DUDAS
+                }
 
                 $$.tipo = aux->tipo;
                 $$.direcciones = 1;
