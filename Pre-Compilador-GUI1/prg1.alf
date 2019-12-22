@@ -7,8 +7,10 @@ main
 	{
 	    boolean a;
         a  = b1 || !(b2 && b3);
-		return a;
+        return a;
 	}
+
+
 
 	vector[0] =  false;
 	vector[1] = true;
