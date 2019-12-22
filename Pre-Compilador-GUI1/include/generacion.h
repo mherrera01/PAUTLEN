@@ -114,6 +114,7 @@ void mayor(FILE* fpasm, int es_variable1, int es_variable2, int etiqueta);
 void leer(FILE* fpasm, char* nombre, int tipo);
 
 void leer_en_pila(FILE * fpasm, int tipo);
+
 void escribir(FILE* fpasm, int es_variable, int tipo);
 
 /* FUNCIONES CONDICIONALES*/

@@ -18,7 +18,15 @@ segment .text
 pela:
 	push dword ebp
 	mov dword ebp, esp
-	sub esp, 4
+	sub esp, 8
+	lea eax, [ebp + 8]
+	push dword eax
+	call scan_int
+	add esp, 4
+	lea eax, [ebp - 8]
+	push dword eax
+	call scan_int
+	add esp, 4
 	push dword 10101
 	lea eax, [ebp - 4]
 	push dword eax
@@ -29,6 +37,34 @@ pela:
 	pop dword eax
 	pop dword ebx
 	mov dword [ebx], eax
+	lea eax, [ebp - 8]
+	push dword eax
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	lea eax, [ebp + 8]
+	push dword eax
+	lea eax, [ebp - 4]
+	push dword eax
+	pop dword eax
+	pop dword ebx
+	push dword eax
+	push dword ebx
+	pop dword eax
+	mov dword eax, [eax]
+	pop dword ebx
+	mov dword [ebx], eax
+	lea eax, [ebp - 4]
+	push dword eax
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
 	lea eax, [ebp - 4]
 	push dword eax
 	pop dword eax
@@ -142,8 +178,35 @@ _fin_condicional_simple_2:
 	add esp, 4
 	call print_endofline
 _fin_condicional_compuesto_2:
+	push dword _y1
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
 	call pela
-	add esp, 0
+	add esp, 4
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	push dword _z1
+	pop dword eax
+	mov dword eax, [eax]
+	push dword eax
+	call pela
+	add esp, 4
+	push dword eax
+	pop dword eax
+	mov dword [_x1], eax
+	push dword _x1
+	pop dword eax
+	mov dword eax, [eax]
+	neg eax
+	push dword eax
+	pop dword eax
+	mov dword [_x1], eax
+	push dword _x1
+	pop dword eax
+	mov dword eax, [eax]
 	push dword eax
 	call print_int
 	add esp, 4

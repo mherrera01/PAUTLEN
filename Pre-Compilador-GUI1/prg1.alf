@@ -6,11 +6,23 @@ main
   int x1,y1,z1;
   boolean a1,b1,c1;
 
-  function int pela(){
+  function int pela(int z){
 
     int hate;
 
+    int a1;
+
+    scanf z;
+
+    scanf a1;
+
     hate = 10101;
+
+    printf a1;
+
+    hate = z;
+
+    printf hate;
 
     return hate;
   }
@@ -38,6 +50,12 @@ main
     printf 1000;
   }
 
-  printf pela();
+  printf pela(y1);
+
+  x1 = pela(z1);
+
+  x1 = -(x1);
+
+  printf x1;
 
 }
