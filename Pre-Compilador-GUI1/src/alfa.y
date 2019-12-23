@@ -1363,7 +1363,7 @@ identificador: TOK_IDENTIFICADOR {
             fprintf(stdout,"****Error Semantico en la linea %d: Declaracion duplicada.\n", line);
             return -1;
         }else{
-            //INSERTARLO EN LA TABLA GLOBAL(Revisar parametros)
+            //INSERTARLO EN LA TABLA GLOBAL
             if(DeclararGlobal($1.lexema,VARIABLE,tipo_actual,clase_actual,tamanio_vector_actual,0) == OK){
                 tamanio_vector_actual=0;
             }else{
