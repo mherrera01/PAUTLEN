@@ -1,61 +1,28 @@
-// Tratamiento de funciones: recursividad
-
 main
 {
+    boolean resultado;
+	array boolean[3] vector;
 
-  int x1,y1,z1;
-  boolean a1,b1,c1;
+	function boolean or (boolean b1; boolean b2; boolean b3)
+	{
+	    boolean a;
+        a  = b1 || b2 || b3;
+		return a;
+	}
 
-  function int pela(int z){
-
-    int hate;
-
-    int a1;
-
-    scanf z;
-
-    scanf a1;
-
-    hate = 10101;
-
-    printf a1;
-
-    hate = z;
-
-    printf hate;
-
-    return hate;
+  function boolean peque(){
+    return true;
   }
 
-  scanf x1;
+	vector[0] =  false;
+	vector[1] = true;
+	vector[2] = false;
 
-  y1 = -(x1);
+	resultado = !(or (vector[0], vector [1], vector [2]));
 
-  z1 = (-(y1) * 10);
+  vector[1] = peque();
 
-  printf x1;
-
-  printf y1;
-
-  printf z1;
-
-
-  if((x1 == y1)){
-    printf 0001;
-  }
-
-  if((x1 == y1 * -x1)){
-    printf 0000;
-  }else{
-    printf 1000;
-  }
-
-  printf pela(y1);
-
-  x1 = pela(z1);
-
-  x1 = -(x1);
-
-  printf x1;
+  printf vector[1];
+	printf resultado;
 
 }

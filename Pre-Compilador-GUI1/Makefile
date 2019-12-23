@@ -1,4 +1,4 @@
-all: PruebaSemantico GenerarAsm CompilarAsm CompilarEjecutable
+all: PruebaSemantico GenerarAsm
 
 lex.yy.c: src/alfa.l y.tab.h
 	flex src/alfa.l

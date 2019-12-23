@@ -109,6 +109,7 @@ STATUS DeclararFuncion(char * identificador,CATEGORIA categoria, TIPO tipo, CLAS
 
     if (tablaSimbolosLocal != NULL) {
         return insertar_simbolo(tablaSimbolosLocal,identificador,categoria,tipo,clase, valor1,valor2);
+
     } else {
         return ERROR;
     }

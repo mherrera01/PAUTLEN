@@ -1014,7 +1014,7 @@ exp: exp TOK_MAS exp {
                   escribir_operando(yyout,$1.lexema,1); //Direccion
                 }else{
                   escribir_operando(yyout,$1.lexema,1); //Direccion
-                  operandoEnPilaAArgumento(yyout,1); //DUDAS
+                  operandoEnPilaAArgumento(yyout,1);
                 }
 
                 $$.tipo = aux->tipo;
@@ -1032,7 +1032,7 @@ exp: exp TOK_MAS exp {
         aux =  UsoGlobal($1.lexema);
         if(aux != NULL){
             if(aux->categoria == FUNCION){
-                fprintf(stdout,"****Error Semantico en la linea %d: Variable %s de categoria incorrecta.\n", line, $1.lexema);
+                fprintf(stdout,"****Error Semantico en la linea %d: No esta permitido el uso de llamadas a funciones como parametros de otras funciones.\n", line);
                 return -1;
             }
 
@@ -1045,7 +1045,7 @@ exp: exp TOK_MAS exp {
               escribir_operando(yyout,$1.lexema,1); //Direccion
             }else{
               escribir_operando(yyout,$1.lexema,1); //Direccion
-              operandoEnPilaAArgumento(yyout,1); //DUDAS
+              operandoEnPilaAArgumento(yyout,1);
             }
 
             $$.tipo = aux->tipo;

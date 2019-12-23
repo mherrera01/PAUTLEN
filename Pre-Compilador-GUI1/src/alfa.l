@@ -52,5 +52,5 @@ false {col+=yyleng;yylval.atributos.valor_entero = 0;fprintf(stdout,";D:\t%s\n",
 ">" {col+=yyleng;fprintf(stdout,";D:\t%s\n",yytext); return TOK_MAYOR;}
 [0-9]+ {col+=yyleng; yylval.atributos.valor_entero=atoi(yytext); fprintf(stdout,";D:\t%s\n",yytext); return TOK_CONSTANTE_ENTERA;}
 [a-zA-Z][a-zA-Z0-9]* {col+=yyleng; strcpy(yylval.atributos.lexema, yytext); if(yyleng<=100){fprintf(stdout,";D:\t%s\n",yytext);}else{fprintf(stdout,"****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",line,col-yyleng,yytext); error=1; return TOK_ERROR;}; return TOK_IDENTIFICADOR;}
-. {error=1; col+=yyleng; fclose(stdout); fprintf(stdout,"****Error morfologico en [lin %d, col %d]: simbolo no permitido (%s)\n",line,col-yyleng,yytext); return TOK_ERROR;}
+. {error=1; col+=yyleng; fprintf(stdout,"****Error morfologico en [lin %d, col %d]: simbolo no permitido (%s)\n",line,col-yyleng,yytext); return TOK_ERROR;}
 %%
